@@ -5,10 +5,10 @@ class SavingAccount:
     def __init__(self, percent: float, default_income=0):
         self.balance = default_income
         self.percent = percent  # используется только для вывода
-        self.rate = 1.0 + percent / 100
+        self.rate = percent / 100
 
     def add_money(self, summ):
-        self.balance += summ * self.rate
+        self.balance += summ
         print(f"Saving account was topped up by {summ}. Percents accrued: {summ * self.rate - summ}")
         return None
 
