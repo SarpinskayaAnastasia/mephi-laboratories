@@ -1,6 +1,3 @@
-import json
-
-
 class Card:
     def __init__(self, number: str, balance: float, limit=float('inf'), children=False) -> None:
         # у взрослой карты лимит все-таки есть, но он бесконечный
@@ -53,26 +50,6 @@ class Card:
             return None
         print(f'Required payment "{name}" was unsucceed')
         return None
-
-
-with open("people_cards.json", "r") as file:
-    cards = list()
-    [cards.extend(x.get("cards")) for x in json.load(file)]
-    dbcards = dict([(Card.from_json(x).number, Card.from_json(x)) for x in cards])
-    del cards
-
-
-def search_card(number: str) -> Card or None:
-    global dbcards
-    m = dbcards.get(number)
-    if m:
-        if m.children:
-            print("Card with this number found, but it kid's")
-            return None
-        print("Card with this number is found")
-        return m
-    print("Card with this number isn't found")
-    return None
 
 
 if __name__ == "__main__":
