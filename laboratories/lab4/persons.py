@@ -1,6 +1,7 @@
 from income_accounts import SavingAccount, InvestmentAccount
-from cards import Card, search_card
-from random import choice
+from cards import Card
+from copy import copy
+import json
 
 
 class Person:
@@ -72,6 +73,19 @@ class Person:
         print('transfer unsuccessful')
         return None
 
+    def transfer_percent(self, summ: float):
+        if not self.sa:
+            return summ
+        double_sum = copy(summ)
+        s: SavingAccount
+        for s in self.sa:
+            if double_sum - double_sum * s.rate < 0:
+                break
+            s.add_money(double_sum * s.rate)
+            double_sum -= double_sum * s.rate
+        print('Percents were transferred')
+        return double_sum
+
 
 class Adult(Person):
     def __init__(self, first_name: str, last_name: str, cards: list, ch: list) -> None:
@@ -89,7 +103,8 @@ class Adult(Person):
 
     def get_salary(self, summ):
         fav_card = sorted(self.cards, key=lambda x: x.balance)[0]
-        fav_card.add_money(summ)
+        new_summ = self.transfer_percent(summ)
+        fav_card.add_money(new_summ)
         print(f'{self} got salary')
         return None
 
@@ -161,30 +176,37 @@ class Adult(Person):
     def transfer(self, summ: float, card_num: str):
         if not self.cards:
             return None
-        other_card = search_card(card_num)
-        if not other_card:
+        a, c = searching(card_num)
+        if not c:
             return None
         fav_card = sorted(self.cards, key=lambda x: -x.balance)[0]
         if fav_card.spend(summ):
-            other_card.add_money(summ)
+            a.get_money_from_transfer(summ, c)
             print('Transfer successful')
             return None
         print('Transfer unsuccessful')
+        return None
+
+    def get_money_from_transfer(self, summ, card: Card):
+        print(summ, card)
+        new_summ = self.transfer_percent(summ)
+        card.add_money(new_summ)
         return None
 
     def get_money_from_ia(self, summ):
         if summ < 0:
             return None
         if not self.ia:
-            print(f'{self} have no saving account')
+            print(f'{self} have no investment account')
             return None
         fav_ia: InvestmentAccount
         fav_ia = sorted(self.ia, key=lambda x: -x.balance)[0]
         if fav_ia.transfer(summ):
+            new_summ = self.transfer_percent(summ)
             fav_card: Card
             fav_card = sorted(self.cards, key=lambda x: x.balance)[0]
-            fav_card.add_money(summ)
-            print(f'{self} transfered {summ} from {fav_ia} to {fav_card}')
+            fav_card.add_money(new_summ)
+            print(f'{self} transferred {new_summ} from {fav_ia} to {fav_card}')
             return None
         print('transfer unsuccessful')
         return None
@@ -235,8 +257,26 @@ class Child(Person):
         if not self.cash:
             return None
         fav_card = sorted(self.cards, key=lambda x: x.balance)[0]  # выбирается карта с наименьшим балансом
-        fav_card.add_money(self.cash)
+        new_summ = self.transfer_percent(self.cash)
+        fav_card.add_money(new_summ)
         print(f'{self} added cash on {fav_card}')
+
+
+with open('people_cards.json') as js:
+    data = json.load(js)
+
+dbadults = [Adult.from_json(a) for a in data]
+
+
+def searching(number: str) -> (Adult, Card) or None:
+    for a in dbadults:
+        for c in a.cards:
+            if c.number == number:
+                print(a, c)
+                return a, c
+            continue
+        continue
+    return None
 
 
 if __name__ == "__main__":
