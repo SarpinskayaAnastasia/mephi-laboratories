@@ -1,6 +1,6 @@
 from third import NStacks
 
-cases = [
+test_cases = [
     [[1, 2, 3, 4, 5], True],
     [[5, 4, 3, 2, 1], True],
     [[2, 1, 4, 3, 5], True],
@@ -22,9 +22,9 @@ def can_rearrange_cars(entering: list[int], exiting: list[int]) -> bool:
     street = 0
     jail = 1
     sts = NStacks(2, len(entering))
-    for f in entering[::-1]:  # переворачиваем стек с въезжающими машинами, чтобы все корректно добавлялось в стек с
+    for fe in entering[::-1]:  # переворачиваем стек с въезжающими машинами, чтобы все корректно добавлялось в стек с
         # выезжающими машинами
-        sts.pusho(street, f)
+        sts.pusho(street, fe)
     for lim in exiting:
         while lim in sts.get_items(street):
             itm = sts.popo(street)
@@ -34,19 +34,12 @@ def can_rearrange_cars(entering: list[int], exiting: list[int]) -> bool:
     return True
 
 
-def main() -> bool:
+if __name__ == "__main__":
     enter_order = [1, 2, 3, 4, 5]
     f = True
-    for exit_order, result in cases:
+    for exit_order, result in test_cases:
         if can_rearrange_cars(enter_order, exit_order) != result:
             print(f'fail: {exit_order}, expected: {result}')
             f = False
     if f:
         print('success')
-        return True
-    else:
-        return False
-
-
-if __name__ == "__main__":
-    main()
