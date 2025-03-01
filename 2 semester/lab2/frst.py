@@ -40,7 +40,16 @@ class OneConnected:
         self.size = 0
 
     def __str__(self):
-        return str(self.top) + ' -> ' + str(self.top.next)
+        try:
+            self.is_empty()
+            s = [str(self.top)]
+            n = self.top
+            while n.next is not None:
+                n = n.next
+                s.append(str(n))
+            return ' -> '.join(s)
+        except IndexError:
+            return 'This is an empty once connected list.'
 
     def is_empty(self):
         if not self.size:
@@ -99,8 +108,6 @@ class OneConnected:
             new_tail = OnceNode(item)
             old_tail = self.find_tail()
             old_tail.set_next(new_tail)
-            '''print(f"{old_tail} -> {old_tail.next}")
-            print(f"{new_tail} -> {new_tail.next}")'''
             self.size += 1
         except IndexError:  # если список пуст, без разницы, как добавить наш элемент
             self.push_top(item)
@@ -116,9 +123,6 @@ class OneConnected:
             old_n = n_1.next
             n_1.set_next(new_n)
             new_n.set_next(old_n)
-            '''print(f"{n_1} -> {n_1.next}")
-            print(f"{new_n} -> {new_n.next}")
-            print(f"{old_n} -> {old_n.next}")'''
             self.size += 1
         except IndexError:
             self.push_top(item)  # то же самое
@@ -145,11 +149,9 @@ class OneConnected:
             # разницы, как его удалять
         need_node_n1 = self.find_node_content(content)
         need_node = need_node_n1.next
-        # print(f"before: {need_node_n1} -> {need_node_n1.next}")
         need_node_n1.set_next(need_node.next)
         need_node.set_next(None)  # обрываем связи, чтобы действительно удалить узел
         self.size -= 1
-        # print(f"after: {need_node_n1} -> {need_node_n1.next}")
         return need_node
 
 
@@ -174,26 +176,9 @@ class CycleDoubleConnected:
 
 if __name__ == "__main__":
     p = OneConnected()
+    print(p)
     for i in range(1, 20, 4):
         p.push_tail(i)
-    p.push_tail(77)
-
-    p.push_n(4, 99)
-    print()
-    print(p.pop_top())
     print(p)
-    print(p.pop_tail())
+    p.push_top(77)
     print(p)
-    print(p.pop_tail())
-    print()
-    print(p)
-    print(p.pop_content(5))
-    try:
-        print(p.pop_content(8888))
-    except ValueError:
-        print('нету 8888...')
-    print(p.size, 'size!')
-    print(p.find_tail())
-    print(p.top)
-    print(p.find_n_node(1, True))
-    print(p.find_node_content(9, True))
