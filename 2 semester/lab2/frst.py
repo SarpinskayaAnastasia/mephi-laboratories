@@ -362,17 +362,68 @@ class CycleDoubleConnected(DoubleConnected):
         except IndexError:
             self.push_top(item)
 
+    def drop(self):
+        if self.size == 1:
+            content = self.top
+            self.top = self.tail = None
+            self.size = 0
+            return content
+
     def pop_top(self):
         self.is_empty()
+        content = self.top
+        c = self.drop()
+        if c:
+            return c
+        self.top = self.top.next
+        self.tail.set_next_prev(self.top, self.tail.prev)
+        self.top.set_next_prev(self.top.next, self.tail)
+        content.set_next_prev(None, None)
+        self.size -= 1
+        return content
 
     def pop_tail(self):
         self.is_empty()
+        content = self.tail
+        c = self.drop()
+        if c:
+            return c
+        self.tail = self.tail.prev
+        self.tail.set_next_prev(self.top, self.tail.prev)
+        self.top.set_next_prev(self.top.next, self.tail)
+        content.set_next_prev(None, None)
+        self.size -= 1
+        return content
 
     def pop_content(self, content):
         self.is_empty()
+        need_node = self.find_node_content(content)
+        c = self.drop()  # эта часть кода выполняется, если мы нашли-таки нужный узел, а значит нужный узел 
+        # располагался "в начале/конце"
+        if c:
+            return c
+        pr = need_node.prev
+        nx = need_node.next
+        pr.set_next_prev(nx, pr.prev)
+        nx.set_next_prev(nx.next, pr)
+        need_node.set_next_prev(None, None)
+        self.size -= 1
+        return need_node
 
     def pop_n(self, index):
         self.is_empty()
+        need_node = self.find_n_node(index)
+        c = self.drop()  # эта часть кода выполняется, если мы нашли-таки нужный узел, а значит нужный узел 
+        # располагался "в начале/конце"
+        if c:
+            return c
+        pr = need_node.prev
+        nx = need_node.next
+        pr.set_next_prev(nx, pr.prev)
+        nx.set_next_prev(nx.next, pr)
+        need_node.set_next_prev(None, None)
+        self.size -= 1
+        return need_node
 
 
 if __name__ == "__main__":
