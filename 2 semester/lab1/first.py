@@ -1,6 +1,3 @@
-from typing import Type
-
-
 class Node:
     def __init__(cls, content):
         cls.content = content
@@ -110,7 +107,7 @@ class Deque:
         cls.size += 1
 
 
-def string_to_deque(string: str) -> Type[Deque]:
+def string_to_deque(string: str) -> Deque:
     deque = Deque()
     for item in string.replace(" ", "").lower():
         deque.push_rear(item)
