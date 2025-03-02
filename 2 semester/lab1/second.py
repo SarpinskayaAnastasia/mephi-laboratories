@@ -1,45 +1,94 @@
-from third import NStacks
-
-test_cases = [
-    [[1, 2, 3, 4, 5], True],
-    [[5, 4, 3, 2, 1], True],
-    [[2, 1, 4, 3, 5], True],
-    [[3, 2, 1, 4, 5], True],
-    [[4, 3, 5, 2, 1], True],
-    [[2, 3, 1, 4, 5], True],
-    [[1, 3, 2, 5, 4], True],
-    [[4, 5, 3, 2, 1], True],
-    [[5, 3, 4, 2, 1], False],
-    [[3, 1, 2, 5, 4], False],
-    [[5, 1, 4, 2, 3], False],
-    [[3, 5, 4, 1, 2], False],
-]
+UNITS = (
+    ([1, 2, 3, 4, 5], True),
+    ([5, 4, 3, 2, 1], True),
+    ([2, 1, 4, 3, 5], True),
+    ([3, 2, 1, 4, 5], True),
+    ([4, 3, 5, 2, 1], True),
+    ([2, 3, 1, 4, 5], True),
+    ([1, 3, 2, 5, 4], True),
+    ([4, 5, 3, 2, 1], True),
+    ([5, 3, 4, 2, 1], False),
+    ([3, 1, 2, 5, 4], False),
+    ([5, 1, 4, 2, 3], False),
+    ([3, 5, 4, 1, 2], False),
+)
 
 
-def can_rearrange_cars(entering: list[int], exiting: list[int]) -> bool:
-    if len(entering) != len(exiting):
-        raise ValueError("The number of cars entering and exiting is different.")
-    street = 0
-    jail = 1
-    sts = NStacks(2, len(entering))
-    for fe in entering[::-1]:  # переворачиваем стек с въезжающими машинами, чтобы все корректно добавлялось в стек с
-        # выезжающими машинами
-        sts.pusho(street, fe)
-    for lim in exiting:
-        while lim in sts.get_items(street):
-            itm = sts.popo(street)
-            sts.pusho(jail, itm)
-        if sts.popo(jail) != lim:
+class Node:
+    def __init__(cls, content):
+        cls.content = content
+        cls.link = None
+
+    def __str__(cls):
+        return str(cls.content)
+
+
+class Stack:
+    def __init__(cls):
+        cls.size = 0
+        cls.top = None
+
+    def check(function):
+        """Проверить, не пустой ли стек."""
+
+        def wrapper(cls, *args, **kwargs):
+            if not cls.size:
+                raise IndexError("Stack is empty")
+            return function(cls, *args, **kwargs)
+
+        return wrapper
+
+    @check
+    def peek(cls):
+        return cls.top.content
+
+    @check
+    def pop(cls):
+        content = cls.top.content
+        cls.top = cls.top.link
+        cls.size -= 1
+        return content
+
+    def push(cls, _item):
+        item = Node(_item)
+        if cls.size:
+            item.link = cls.top
+        cls.size += 1
+        cls.top = item
+
+
+def list_to_stack(order: list) -> Stack:
+    stack = Stack()
+    order.reverse()
+
+    for item in order:
+        stack.push(item)
+    return stack
+
+
+def can_rearrange_cars(in_order: list[int], out_order: list[int]) -> bool:
+    street, yard = list_to_stack(list(in_order)), Stack()
+
+    for target in out_order:
+        while not yard.size or yard.peek() != target:
+            if not street.size:
+                break
+            yard.push(street.pop())
+
+        if yard.pop() != target:
             return False
     return True
 
 
+def main():
+    in_order = [1, 2, 3, 4, 5]
+
+    for out_order, verdict in UNITS:
+        assert (
+            can_rearrange_cars(in_order, out_order) == verdict
+        ), "Case failed for %s, expected %s" % (out_order, str(verdict).upper())
+    print("All unit tests passed")
+
+
 if __name__ == "__main__":
-    enter_order = [1, 2, 3, 4, 5]
-    f = True
-    for exit_order, result in test_cases:
-        if can_rearrange_cars(enter_order, exit_order) != result:
-            print(f'fail: {exit_order}, expected: {result}')
-            f = False
-    if f:
-        print('success')
+    main()

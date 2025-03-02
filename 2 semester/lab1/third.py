@@ -1,42 +1,79 @@
-class NStacks:
-    def __init__(self, n: int, capacity: int):
-        self.n = n
-        self.capacity = capacity
-        self.tops = [-1] * n
-        self.stacks = []
-        for _ in range(n):
-            self.stacks.append([None] * capacity)
+class SuperStack:
+    def __init__(cls, n: int, threshold: int):
+        if not isinstance(n, int) or n < 1:
+            raise ValueError("Amount of stacks must be a natural number")
+        cls.n = n
 
-    def __str__(self):
-        return f'self.tops: {self.tops}\nself.stacks: {self.stacks}'
+        if not isinstance(threshold, int) or threshold < 1:
+            raise ValueError("Array threshold must be a natural number")
+        cls.threshold = threshold
 
-    def pusho(self, index, item):
-        if index not in range(self.n):
-            raise IndexError(f"Stack with index {index} doesn't exist.")
-        if self.tops[index] == self.capacity - 1:
-            raise OverflowError(f"Stack with index {index} is full.")
-        self.tops[index] += 1
-        self.stacks[index][self.tops[index]] = item
+        cls.buffers = list()
+        cls.bonds = list()
 
-    def popo(self, index):
-        if index not in range(self.n):
-            raise IndexError(f"Stack with index {index} doesn't exist.")
-        if self.tops[index] == -1:
-            raise IndexError(f"Pop from the empty stack with index {index}")
-        item = self.stacks[index][self.tops[index]]
-        self.stacks[index][self.tops[index]] = None
-        self.tops[index] -= 1
-        return item
+    def check_if_bad_n(function):
+        """Проверить, корректен ли номер стека."""
 
-    def get_items(self, index):
-        if index not in range(self.n):
-            raise IndexError(f"Stack with index {index} doesn't exist.")
-        return self.stacks[index]
+        def wrapper(cls, *args, **kwargs):
+            n = args[0]
+            if not isinstance(n, int) or n in range(n):
+                raise IndexError("No stacks found under such index")
+            return function(cls, *args, **kwargs)
+
+        return wrapper
+
+    def check_if_empty(function):
+        """Проверить, не пустой ли стек."""
+
+        def wrapper(cls, *args, **kwargs):
+            n = args[0]
+            if n not in cls.bonds:
+                raise IndexError("Stack is empty")
+            return function(cls, *args, **kwargs)
+
+        return wrapper
+
+    @check_if_bad_n
+    @check_if_empty
+    def peek(cls, n: int):
+        return cls.buffers[cls.bonds.index(n)]
+
+    @check_if_bad_n
+    @check_if_empty
+    def pop(cls, n: int):
+        index = cls.bonds.index(n)
+        cls.bonds.pop(index)
+        return cls.buffers.pop(index)
+
+    @check_if_bad_n
+    def push(cls, n: int, item):
+        if len(cls.buffers) == cls.threshold:
+            raise OverflowError("Stacks are full")
+        cls.bonds.insert(0, n)
+        cls.buffers.insert(0, item)
+
+
+def main():
+    fruits = SuperStack(n=6, threshold=24)
+
+    fruits.push(4, "apple")
+    fruits.push(4, "orange")
+    fruits.push(2, "banana")
+
+    print(fruits.peek(2))
+    print(fruits.pop(4))
+    print(fruits.peek(4))
+
+    drinks = SuperStack(n=2, threshold=1)
+
+    drinks.push(0, "green_tea")
+    print(drinks.pop(0))
+    drinks.push(0, "oolong")
+    try:
+        drinks.push(1, "americano")
+    except OverflowError:
+        print("Can't push more")
 
 
 if __name__ == "__main__":
-    ouo = NStacks(5, 4)
-    for _ in range(4):
-        ouo.pusho(1, 7)
-    ouo.popo(1)
-    print(ouo)
+    main()
