@@ -1,4 +1,4 @@
-from frst import OnceNode, OneConnected
+from frst import OnceNode, OnceConnected
 
 
 def get_middle(top: OnceNode) -> OnceNode:
@@ -23,6 +23,8 @@ def reverse(top: OnceNode) -> OnceNode:
 
 
 def is_palindrome(left: OnceNode) -> bool:
+    if not isinstance(left, OnceNode):
+        raise TypeError(f"Incorrect type of variable, expected {OnceNode}, given {type(left)}")
     if left.next is None:
         return True  # ну это если мы единственный символ считаем палиндромом, разумеется
     scnd_half = get_middle(left)
@@ -37,7 +39,7 @@ def is_palindrome(left: OnceNode) -> bool:
 
 def gen_case(string: str) -> tuple[OnceNode, bool]:
     string = string.replace(' ', '').lower()
-    temp = OneConnected()
+    temp = OnceConnected()
     for n in string:
         temp.push_top(n)
     return temp.top, string == string[::-1]
@@ -50,4 +52,3 @@ if __name__ == "__main__":
     for input_top, verdict in cases:
         assert (is_palindrome(input_top) == verdict), f"Case failed for {input_top}, expected {str(verdict)}"
     print("All unit tests passed")
-
