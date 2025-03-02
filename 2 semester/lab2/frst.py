@@ -45,15 +45,14 @@ class OnceConnected:
         self.size = 0
 
     def __str__(self):
-        try:
-            self.is_empty()
+        if self.size:
             s = []
-            n = self.top
-            while n is not None:
-                s.append(str(n))
-                n = n.next
+            obj = self.top
+            for _ in range(self.size):
+                s.append(str(obj))
+                obj = obj.next
             return ' -> '.join(s)
-        except IndexError:
+        else:
             return 'This is an empty once connected list.'
 
     def is_empty(self):
@@ -178,15 +177,14 @@ class DoubleConnected(OnceConnected):
         self.tail = None
 
     def __str__(self):
-        try:
-            self.is_empty()
+        if self.size:
             s = []
-            n = self.top
-            while n is not None:
-                s.append(str(n))
-                n = n.next
+            obj = self.top
+            for _ in range(self.size):
+                s.append(str(obj))
+                obj = obj.next
             return ' <-> '.join(s)
-        except IndexError:
+        else:
             return 'This is an empty doubly connected list.'
 
     def find_tail(self):
@@ -317,17 +315,144 @@ class DoubleConnected(OnceConnected):
         return need_node
 
 
+class CycleOnceConnected(OnceConnected):
+    def __str__(self):
+        return '-> ' + str(super) + ' ->' if self.size else str(super) + ' (Circular!)'
+
+    def find_tail(self):
+        self.is_empty()
+        tail = self.top
+        for _ in range(self.size):
+            tail = tail.next
+        return tail
+
+    def find_n_node(self, index, searching=False):
+        self.is_empty()
+        if index not in range(self.size):
+            raise IndexError(f"Incorrect index, expected integer number from 0 to {self.size}")
+        if not index:
+            return self.top if searching else self.find_tail()
+        prev = self.top
+        res = self.top.next
+        while index != 1:
+            prev = prev.next
+            res = res.next
+            index -= 1
+        if searching:
+            return res
+        return prev
+
+    def find_node_content(self, content, searching=False):
+        self.is_empty()
+        if self.top.data == content:
+            return self.top if searching else self.find_tail()
+        elif self.size != 1 and self.top.data != content:
+            prev = self.top
+            res = self.top.next
+            for _ in range(self.size):
+                if res.data == content:
+                    return res if searching else prev
+                res = res.next
+                prev = prev.next
+        raise ValueError(f"Node with content {content} doesn't exist")
+
+    def make_cycle(self):
+        self.is_empty()
+        tail = self.find_tail()
+        if not tail.next:
+            tail.set_next(self.top)
+
+    def push_top(self, item):
+        new_top = OnceNode(item)
+        if not self.size:
+            self.top = new_top
+            self.size += 1
+            self.make_cycle()
+        else:
+            new_top.set_next(self.top)
+            tail = self.find_tail()
+            tail.set_next(new_top)
+            self.top = new_top
+            self.size += 1
+
+    def push_tail(self, item):
+        self.push_top(item)
+
+    def push_n(self, index, item):
+        try:
+            new_n = OnceNode(item)
+            old_n_1 = self.find_n_node(index)
+            old_n = old_n_1.next
+            new_n.set_next(old_n)
+            old_n_1.set_next(new_n)
+            self.size += 1
+        except IndexError:
+            self.push_top(item)
+
+    def drop(self):
+        if self.size == 1:
+            content = self.top
+            self.top = None
+            self.size = 0
+            return content
+
+    def pop_top(self):
+        self.is_empty()
+        c = self.drop()
+        if c:
+            return c
+        content = self.top
+        self.top = self.top.next
+        tail = self.find_tail()
+        tail.set_next(self.top)
+        content.set_next(None)
+        self.size -= 1
+        return content
+
+    def pop_tail(self):
+        self.is_empty()
+        c = self.drop()
+        if c:
+            return c
+        new_tail = self.find_n_node(self.size)
+        content = self.find_tail()
+        new_tail.set_next(self.top)
+        content.set_next(None)
+        self.size -= 1
+        return content
+
+    def pop_content(self, content):
+        self.is_empty()
+        pr = self.find_node_content(content)
+        need_node = pr.next
+        c = self.drop()  # эта часть кода выполняется, если мы нашли-таки нужный узел, а значит нужный узел
+        # располагался "в начале/конце"
+        if c:
+            return c
+        nx = need_node.next
+        pr.set_next(nx)
+        need_node.set_next(None)
+        self.size -= 1
+        return need_node
+
+    def pop_n(self, index):
+        self.is_empty()
+        pr = self.find_n_node(index)
+        need_node = pr.next
+        c = self.drop()  # эта часть кода выполняется, если мы нашли-таки нужный узел, а значит нужный узел
+        # располагался "в начале/конце"
+        if c:
+            return c
+        nx = need_node.next
+        pr.set_next(nx)
+        need_node.set_next(None)
+        self.size -= 1
+        return need_node
+
+
 class CycleDoubleConnected(DoubleConnected):
     def __str__(self):
-        if self.size:
-            s = []
-            n = self.top
-            while not n == self.tail:
-                s.append(str(n))
-                n = n.next
-            return '-> ' + ' <-> '.join(s) + ' ->'
-        else:
-            return 'This is an empty circular doubly connected list.'
+        return '-> ' + str(super) + ' ->' if self.size else str(super) + ' (Circular!)'
 
     def make_cycle(self):
         self.is_empty()
@@ -339,13 +464,14 @@ class CycleDoubleConnected(DoubleConnected):
         new_top = DoubleNode(item)
         if not self.size:
             self.top = self.tail = new_top
+            self.size += 1
             self.make_cycle()
         else:
             new_top.set_next_prev(self.top, self.tail)
             self.top.set_next_prev(self.top.next, new_top)
             self.tail.set_next_prev(new_top, self.tail.prev)
             self.top = new_top
-        self.size += 1
+            self.size += 1
 
     def push_tail(self, item):  # в циклическом списке этот вид пуша одинаков
         self.push_top(item)
@@ -398,7 +524,7 @@ class CycleDoubleConnected(DoubleConnected):
     def pop_content(self, content):
         self.is_empty()
         need_node = self.find_node_content(content)
-        c = self.drop()  # эта часть кода выполняется, если мы нашли-таки нужный узел, а значит нужный узел 
+        c = self.drop()  # эта часть кода выполняется, если мы нашли-таки нужный узел, а значит нужный узел
         # располагался "в начале/конце"
         if c:
             return c
@@ -413,7 +539,7 @@ class CycleDoubleConnected(DoubleConnected):
     def pop_n(self, index):
         self.is_empty()
         need_node = self.find_n_node(index)
-        c = self.drop()  # эта часть кода выполняется, если мы нашли-таки нужный узел, а значит нужный узел 
+        c = self.drop()  # эта часть кода выполняется, если мы нашли-таки нужный узел, а значит нужный узел
         # располагался "в начале/конце"
         if c:
             return c
