@@ -24,7 +24,7 @@ class Compf:
     однобуквенные имена переменных [a-z]
     """
 
-    SYMBOLS = re.compile("[a-z]")
+    SYMBOLS = re.compile("([a-z]|<|>)")
 
     def __init__(self):
         # Создание стека отложенных операций
@@ -33,12 +33,14 @@ class Compf:
         self.data = []
 
     def compile(self, str):
+        str = str.replace("<<", "<")
+        str = str.replace(">>", ">")
         self.data.clear()
         # Последовательный вызов для всех символов
         # взятой в скобки формулы метода process_symbol
         for c in "(" + str + ")":
             self.process_symbol(c)
-        return " ".join(self.data)
+        return " ".join(self.data).replace('>', '>>').replace('<', '<<')
 
     # Обработка символа
     def process_symbol(self, c):
@@ -47,7 +49,7 @@ class Compf:
         elif c == ")":
             self.process_suspended_operators(c)
             self.s.pop()
-        elif c in "+-*/":
+        elif c in "+-*/<>":
             self.process_suspended_operators(c)
             self.s.push(c)
         else:
@@ -74,9 +76,19 @@ class Compf:
             raise Exception(f"Недопустимый символ '{c}'")
 
     # Определение приоритета операции
-    @staticmethod
+    @staticmethod  # 17 задача
     def priority(c):
-        return 1 if (c == "+" or c == "-") else 2
+        return 1 if (c == "+" or c == "-" or c == ">" or c == "<") else 2
+
+    '''
+    @staticmethod  # 18 задача
+    def priority(c):
+        if c == "<":
+            return 4 
+        elif c == ">":
+            return 1
+        return 2 if (c == "+" or c == "-") else 3
+    '''
 
     # Определение отношения предшествования
     @staticmethod

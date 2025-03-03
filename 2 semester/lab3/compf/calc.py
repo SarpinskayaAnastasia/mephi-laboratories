@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import re
-from operator import add, sub, mul, truediv
+from operator import add, sub, mul, truediv, rshift, lshift
 from stack import Stack
 from compf import Compf
 
@@ -34,7 +34,7 @@ class Calc(Compf):
     def process_oper(self, c):
         second, first = self.r.pop(), self.r.pop()
         self.r.push({"+": add, "-": sub, "*": mul,
-                     "/": truediv}[c](first, second))
+                     "/": truediv, ">>": rshift, "<<": lshift}[c](first, second))
 
 
 if __name__ == "__main__":
