@@ -6,6 +6,11 @@ import re
 from stack import Stack
 
 
+def clear_empty_strs(array: list[str]):
+    while '' in array:
+        array.remove('')
+
+
 class Compf:
     """
     Стековый компилятор формул преобразует правильные
@@ -36,39 +41,18 @@ class Compf:
 
     def compile(self, str_in):
         self.data.clear()
-        # Последовательный вызов для всех символов
-        # взятой в скобки формулы метода process_symbol
-
-        # Тут начинаются мои необратимые изменения, которые я
-        # закомментировал сильнее, чем сам код
-
-        # Уродую строку, чтоб она была сначала в скобках.
-        # Это необходимо типо, чтоб эта херота определяла
-        # нормально порядок действий.
         str_in = f"({str_in})"
 
-        # Тут я заменяю все знаки операций и скобок на формат ~*операция*~
-        # Это нужно, чтоб потом сплитнуть по тильдам,
-        # что и делаю в последней сторке чанка
-        for op in list("+-*/()") + ["<<", ">>"]:
-            str_in = str_in.replace(op, f"~{op}~")
-        list_in = str_in.split("~")
+        for oper in list("+-*/()") + ["<<", ">>"]:
+            str_in = str_in.replace(oper, f"_{oper}_")
+        list_in = str_in.split("_")
 
-        # Удаляю мусорные элементы массива после сплита. Они
-        # образуются из-за сплита по тильдам. У нас появляются две ''
-        # по краям массива.
-        del list_in[0]
-        del list_in[-1]
+        clear_empty_strs(list_in)
 
-        # Тут, по сути, я просто повторяю то, что было в самом
-        # алгоритме. Всё работает, это победа.
         for seq in list_in:
             self.process_sequence(seq)
         return " ".join(self.data)
 
-    # Обработка уже не символа, а последовательности символов. Окак
-    # Тут я изменял эту херота, чтоб она понимала операции "<<" и
-    # ">>"
     def process_sequence(self, seq):
         if seq == "(":
             self.s.push(seq)
@@ -101,7 +85,9 @@ class Compf:
         if not self.SYMBOLS.match(c):
             raise Exception(f"Недопустимый символ '{c}'")
 
-    # Определение приоритета операции
+    # Определение приоритета операции.
+    # Вычисляются значения выражений, содержащих битовые операции << и >>, приоритет которых считается равным
+    # приоритету сложения и вычитания.
     @staticmethod
     def priority(c):
         return 1 if (c == "+" or c == "-" or c == "<<" or c == ">>") else 2
@@ -120,6 +106,6 @@ class Compf:
 if __name__ == "__main__":
     c = Compf()
     while True:
-        str_in = input("Арифметическая  формула: ")
-        print(f"Результат её компиляции: {c.compile(str_in)}")
+        equation = input("Арифметическая  формула: ")
+        print(f"Результат её компиляции: {c.compile(equation)}")
         print()
