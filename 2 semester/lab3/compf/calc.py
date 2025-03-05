@@ -33,8 +33,9 @@ class Calc(Compf):
     # Обработка символа операции
     def process_oper(self, c):
         second, first = self.r.pop(), self.r.pop()
-        self.r.push({"+": add, "-": sub, "*": mul,
-                     "/": truediv, ">>": rshift, "<<": lshift}[c](first, second))
+        self.r.push(
+            {"+": add, "-": sub, "*": mul, "/": truediv, "<<": lshift, ">>": rshift}[c](first, second)
+        )
 
 
 if __name__ == "__main__":
