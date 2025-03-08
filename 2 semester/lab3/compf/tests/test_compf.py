@@ -1,4 +1,5 @@
-from compf_new import Compf
+from compf import Compf
+
 
 class TestCompf:
 
@@ -52,24 +53,24 @@ class TestCompf:
 
     def test_expressions2(self):
         assert self.c.compile("c*(c+c+c+c/(c-c-c-c))") == \
-            "c c c + c + c + c c - c - c - / *"
+               "c c c + c + c + c c - c - c - / *"
 
     def test_expressions3(self):
         assert self.c.compile("a/b*c+d*e/(f+g)") == \
-            "a b / c d + * e * f g + /"
+               "a b / c d + * e * f g + /"
 
     def test_expressions4(self):
         assert self.c.compile("a/b*(c+d*e)/(f+g)") == \
-            "a b / c d + e * * f g + /"
+               "a b / c d + e * * f g + /"
 
     def test_expressions5(self):
         assert self.c.compile("a+b*(c-d)*(c+(d-e)/a)/a") == \
-            "a b + c d - * c d e - + a / * a /"
+               "a b + c d - * c d e - + a / * a /"
 
     def test_expressions6(self):
         assert self.c.compile("((c+(c*(c+(c+c/c)))))/(c+c)") == \
-            "c c c c c + c / + * + c c + /"
+               "c c c c c + c / + * + c c + /"
 
     def test_expressions7(self):
         assert self.c.compile("c+(c+(c*(c+(c/(c*(c+c))))))") == \
-            "c c c c c c c c + * / + * + +"
+               "c c c c c c c c + * / + * + +"
