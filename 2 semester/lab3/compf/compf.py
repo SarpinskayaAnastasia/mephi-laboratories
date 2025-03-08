@@ -49,22 +49,22 @@ class Compf:
 
         clear_empty_strs(list_in)
 
-        for seq in list_in:
-            self.process_sequence(seq)
+        for c in list_in:
+            self.process_sequence(c)
         return " ".join(self.data)
 
-    def process_sequence(self, seq):
-        if seq == "(":
-            self.s.push(seq)
-        elif seq == ")":
-            self.process_suspended_operators(seq)
+    def process_sequence(self, c):
+        if c == "(":
+            self.s.push(c)
+        elif c == ")":
+            self.process_suspended_operators(c)
             self.s.pop()
-        elif seq in list("+-*/") + ["<<", ">>"]:
-            self.process_suspended_operators(seq)
-            self.s.push(seq)
+        elif c in list("+-*/") + ["<<", ">>"]:
+            self.process_suspended_operators(c)
+            self.s.push(c)
         else:
-            self.check_symbol(seq)
-            self.process_value(seq)
+            self.check_symbol(c)
+            self.process_value(c)
 
     # Обработка отложенных операций
     def process_suspended_operators(self, c):
