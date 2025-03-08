@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import re
-from operator import add, sub, mul, truediv
+from operator import add, sub, mul, truediv, rshift, lshift
 from stack import Stack
 from compf import Compf
 
@@ -22,8 +22,8 @@ class Calc(Compf):
         self.r = Stack()
 
     # Интерпретация арифметического выражения
-    def compile(self, str):
-        Compf.compile(self, str)
+    def compile(self, string):
+        Compf.compile(self, string)
         return self.r.top()
 
     # Обработка цифры
@@ -31,15 +31,15 @@ class Calc(Compf):
         self.r.push(int(c))
 
     # Обработка символа операции
+    # lshift - битовый сдвиг влево; rshift - битовый сдвиг вправо
     def process_oper(self, c):
         second, first = self.r.pop(), self.r.pop()
-        self.r.push({"+": add, "-": sub, "*": mul,
-                     "/": truediv}[c](first, second))
+        self.r.push({"+": add, "-": sub, "*": mul, "/": truediv, "<<": lshift, ">>": rshift}[c](first, second))
 
 
 if __name__ == "__main__":
     c = Calc()
     while True:
-        str = input("Арифметическое выражение: ")
-        print(f"Результат его вычисления: {c.compile(str)}")
+        equation = input("Арифметическое выражение: ")
+        print(f"Результат его вычисления: {c.compile(equation)}")
         print()

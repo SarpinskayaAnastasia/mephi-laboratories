@@ -86,3 +86,42 @@ class TestCalc:
     def test_expressions5(self):
         test = '(3-5-2*6/(1+1))/(2*5-1+4*(5*2/3))+(7+4+7/9)/(1+6/3)'
         assert self.c.compile(test) == approx(eval(test))
+
+    # Тесты шифтинга/битового сдвига
+    """
+    Приоритет сдвига является низшим, поэтому часть значений с которыми сравниваю считаю ручками а не в eval
+    Вычисляются значения выражений, содержащих битовые операции << и >>, 
+    приоритет << является минимальным, а >> — максимальным.
+    """
+
+    def test_binary_shift_l_1(self):
+        test = "8+12<<2"  # == (8+12)<<2 == 80
+        assert self.c.compile(test) == approx(eval(test))
+
+    def test_binary_shift_r_1(self):
+        test = "50+8>>2"  # == 50+(8>>2) == 52
+        assert self.c.compile(test) == 52
+
+    def test_binary_shift_l_2(self):
+        test = '80<<2+3'  # == 80<<(2+3) == 2560
+        assert self.c.compile(test) == approx(eval(test))
+
+    def test_binary_shift_r_2(self):
+        test = '80>>2+3'  # == (80>>2)+3 == 23
+        assert self.c.compile(test) == 23
+
+    def test_binary_shift_l_3(self):
+        test = "1+2+(2*(3+7))<<(5+8<<3)"  # == (1+2+(2*(3+7)))<<((5+8)<<3) == 466495420883988419750786779578368
+        assert self.c.compile(test) == approx(eval(test))
+
+    def test_binary_shift_r_3(self):
+        test = "1+2+(2*(3+7))>>(5+8>>3)"  # == 1+2+((2*(3+7))>>(5+(8>>3))) == 3
+        assert self.c.compile(test) == 3
+
+    def test_binary_shift_l_4(self):
+        test = '7>>8<<4'  # == (7>>8)<<4 == 0
+        assert self.c.compile(test) == approx(eval(test))
+
+    def test_binary_shift_r_4(self):
+        test = '7<<8>>4'  # == 7<<(8>>4) == 7
+        assert self.c.compile(test) == 7

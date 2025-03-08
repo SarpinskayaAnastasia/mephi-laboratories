@@ -4,6 +4,11 @@ import re
 from stack import Stack
 
 
+def clear_empty_strs(array: list[str]):
+    while '' in array:
+        array.remove('')
+
+
 class Compf:
     """
     Стековый компилятор формул преобразует правильные
@@ -31,23 +36,30 @@ class Compf:
         self.s = Stack()
         # Создание списка с результатом компиляции
         self.data = []
+        # Создание списка математических операторов
+        self.operators = list(map(str,"+ - * / ( ) << >>".split()))
 
-    def compile(self, str):
+    def compile(self, str_in):
         self.data.clear()
-        # Последовательный вызов для всех символов
-        # взятой в скобки формулы метода process_symbol
-        for c in "(" + str + ")":
-            self.process_symbol(c)
+        str_in = f"({str_in})"
+
+        for op in self.operators:
+            str_in = str_in.replace(op, f" {op} ")
+        list_in = str_in.split()
+
+        clear_empty_strs(list_in)
+
+        for c in list_in:
+            self.process_sequence(c)
         return " ".join(self.data)
 
-    # Обработка символа
-    def process_symbol(self, c):
+    def process_sequence(self, c):
         if c == "(":
             self.s.push(c)
         elif c == ")":
             self.process_suspended_operators(c)
             self.s.pop()
-        elif c in "+-*/":
+        elif c in self.operators:
             self.process_suspended_operators(c)
             self.s.push(c)
         else:
@@ -73,10 +85,14 @@ class Compf:
         if not self.SYMBOLS.match(c):
             raise Exception(f"Недопустимый символ '{c}'")
 
-    # Определение приоритета операции
+    # Определение приоритета операции.
+    """
+    Вычисляются значения выражений, содержащих битовые операции << и >>, 
+    приоритет << является минимальным, а >> — максимальным.
+    """
     @staticmethod
     def priority(c):
-        return 1 if (c == "+" or c == "-") else 2
+        return 2 if (c == "+" or c == "-") else 1 if (c == "<<") else 4 if (c == ">>") else 3
 
     # Определение отношения предшествования
     @staticmethod
@@ -92,6 +108,6 @@ class Compf:
 if __name__ == "__main__":
     c = Compf()
     while True:
-        str = input("Арифметическая  формула: ")
-        print(f"Результат её компиляции: {c.compile(str)}")
+        equation = input("Арифметическая  формула: ")
+        print(f"Результат её компиляции: {c.compile(equation)}")
         print()
