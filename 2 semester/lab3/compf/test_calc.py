@@ -93,11 +93,11 @@ class TestCalc:
 
     def test_binary_shifts2(self):
         test = '5>>1+4'
-        assert self.c.compile(test) == "6"  # в реальности у сдвига приоритет ниже, чем у сложения
+        assert self.c.compile(test) == approx(eval("6"))  # в реальности у сдвига приоритет ниже, чем у сложения
 
     def test_binary_shifts3(self):
         test = '5*7+6-(2>>1)+9<<1-6*(8>>1)'
-        assert self.c.compile(test) == "74"  # здесь оригинальная консоль выдает ValueError: negative shift count
+        assert self.c.compile(test) == approx(eval("74"))  # здесь оригинальная консоль выдает ValueError: negative shift count
 
     def test_binary_shifts4(self):
         test = '5*7+6-(2>>1)+(9<<1)-6*(8>>1)'
