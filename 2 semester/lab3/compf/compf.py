@@ -69,14 +69,14 @@ class Compf:
 
     # Проверка допустимости символа
     @classmethod
-    def check_symbol(self, c):
-        if not self.SYMBOLS.match(c):
+    def check_symbol(cls, c):  # Исправлено: cls вместо self
+        if not cls.SYMBOLS.match(c):  # Исправлено: cls вместо self
             raise Exception(f"Недопустимый символ '{c}'")
 
     # Определение приоритета операции
     @staticmethod
     def priority(c):
-        return 1 if (c == "+" or c == "-") else 2
+        return 2 if (c == "+" or c == "-") else 1  # Инвертированы приоритеты
 
     # Определение отношения предшествования
     @staticmethod
