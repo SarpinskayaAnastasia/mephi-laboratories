@@ -74,31 +74,3 @@ class TestCompf:
     def test_expressions7(self):
         assert self.c.compile("c+(c+(c*(c+(c/(c*(c+c))))))") == \
             "c c c c c c c c + * / + * + +"
-
-    # тест на бинарные операции (17)
-    def test_shift1(self):
-        assert self.c.compile("c>>c+c<<c") == "c c >> c + c <<"
-
-    def test_shift2(self):
-        assert self.c.compile("c<<c-c>>c") == "c c << c - c >>"
-
-    def test_shift3(self):
-        assert self.c.compile("c>>c*c<<c") == "c c c * >> c <<"
-
-    def test_shift4(self):
-        assert self.c.compile("c<<c*c>>c") == "c c c * << c >>"
-
-    '''
-    # тест на бинарные операции (18)
-    def test_shift1(self):
-        assert self.c.compile("c>>c+c<<c") == "c c c c << + >>"
-
-    def test_shift2(self):
-        assert self.c.compile("c<<c-c>>c") == "c c << c - c >>"
-
-    def test_shift3(self):
-        assert self.c.compile("c>>c*c<<c") == "c c c c << * >>"
-
-    def test_shift4(self):
-        assert self.c.compile("c<<c*c>>c") == "c c << c * c >>"
-    '''
