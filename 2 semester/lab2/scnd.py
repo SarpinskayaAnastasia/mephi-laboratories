@@ -1,4 +1,4 @@
-from frst import OnceConnected
+from frst import OnceNode, OnceConnected
 
 
 def reversing(top, k):
@@ -43,7 +43,7 @@ def reverse_in_groups(top, k):
 if __name__ == "__main__":
     sll = OnceConnected()
     for i in range(1, 7):
-        sll.push_tail(i)
+        sll.push_tail(OnceNode(i))
     print(f"Before: {sll}")
 
     sll.top = reverse_in_groups(sll.top, 3)
@@ -51,7 +51,7 @@ if __name__ == "__main__":
 
     secnd_test = OnceConnected()
     for n in range(1, 88, 5):
-        secnd_test.push_tail(n)
+        secnd_test.push_tail(OnceNode(n))
     print(f"Before: {secnd_test}")
 
     secnd_test.top = reverse_in_groups(secnd_test.top, 4)

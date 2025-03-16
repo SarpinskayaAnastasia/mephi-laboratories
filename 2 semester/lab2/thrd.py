@@ -41,7 +41,7 @@ def gen_case(string: str) -> tuple[OnceNode, bool]:
     string = string.replace(' ', '').lower()
     temp = OnceConnected()
     for n in string:
-        temp.push_top(n)
+        temp.push_top(OnceNode(n))
     return temp.top, string == string[::-1]
 
 
