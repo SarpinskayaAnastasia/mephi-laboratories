@@ -1,12 +1,3 @@
-import random
-from string import ascii_letters, digits, punctuation
-
-
-def gen_string(length=10, lot=1) -> str:
-    for _ in range(lot):
-        yield ''.join(random.choices(ascii_letters + digits + punctuation, k=length))
-
-
 class OnceNode:
     def __init__(self, key: str, data):
         self.key = key
