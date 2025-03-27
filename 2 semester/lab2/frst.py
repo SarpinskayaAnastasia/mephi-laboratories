@@ -108,7 +108,7 @@ class OnceConnected:
         elif self.size != 1 and self.top != node_content:
             prev = self.top
             res = self.top.next
-            for _ in range(self.size):
+            for _ in range(self.size - 1):
                 if res == node_content:
                     return res if searching else prev
                 res = res.next
