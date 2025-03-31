@@ -15,7 +15,6 @@ class HashTable:
         def wrapper(self, *args, **kwargs):
             if self.alpha() >= 2 / 3:
                 new_capacity = self.capacity + int(self.capacity * 2 / 3)
-                print(new_capacity)
                 new_hash_table = HashTable(new_capacity)
                 for listik in self.data:
                     while len(listik) > 0:
