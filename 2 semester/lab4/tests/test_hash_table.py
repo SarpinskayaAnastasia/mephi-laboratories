@@ -9,7 +9,7 @@ from string import ascii_letters, digits, punctuation
 from hash_table import HashTable
 
 # Параметры тестирования
-NUM_ELEMENTS = 100000
+NUM_ELEMENTS = 100_000
 KEY_LENGTH = 10
 VALUE_RANGE = (1, 100000)
 
@@ -41,7 +41,7 @@ def test_hash_table():
         insert_times.append(end - start)
 
     avg_insert_time = sum(insert_times) / NUM_ELEMENTS
-    print(f"Среднее время вставки: {avg_insert_time:.6f} сек")
+    print(f"\nСреднее время вставки: {avg_insert_time:.6f} сек, Максимальное время вставки: {max(insert_times)}")
 
     # Тест поиска
     search_times = []
@@ -52,7 +52,7 @@ def test_hash_table():
         search_times.append(end - start)
 
     avg_search_time = sum(search_times) / NUM_ELEMENTS
-    print(f"Среднее время поиска: {avg_search_time:.6f} сек")
+    print(f"Среднее время поиска: {avg_search_time:.6f} сек, Максимальное время поиска: {max(search_times)}")
 
     # Тест удаления
     delete_times = []
@@ -63,7 +63,7 @@ def test_hash_table():
         delete_times.append(end - start)
 
     avg_delete_time = sum(delete_times) / NUM_ELEMENTS
-    print(f"Среднее время удаления: {avg_delete_time:.6f} сек")
+    print(f"Среднее время удаления: {avg_delete_time:.6f} сек, Максимальное время удаления: {max(delete_times)}")
 
 
 if __name__ == "__main__":

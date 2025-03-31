@@ -46,7 +46,7 @@ class HashTable:
         predicted_node = self.data[index].top
         if predicted_node.key != key:
             return None
-        return predicted_node
+        return predicted_node.data
 
     def delete_with_key(self, key: str):
         index = self.__hash_function(key)
@@ -60,7 +60,7 @@ class HashTable:
         if predicted_node.key != key:
             return None
         self.length -= 1
-        return predicted_node
+        return predicted_node.data
 
     def alpha(self) -> float:
         return self.length / self.capacity if self.capacity > 0 else 0
