@@ -26,9 +26,9 @@ def rec_bin_srch(arr: list, x: int, l=0, r=None):
     if arr[current] == x:
         return current
     elif arr[current] > x:
-        return rec_bin_srch(arr, x, l, current)
+        return rec_bin_srch(arr, x, l, current - 1)
     else:
-        return rec_bin_srch(arr, x, current, r)
+        return rec_bin_srch(arr, x, current + 1, r)
 
 
 if __name__ == "__main__":
