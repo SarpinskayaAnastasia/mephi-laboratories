@@ -1,5 +1,15 @@
-def cycle_bin_srch(arr: list, x: int):
-    pass
+def cycle_bin_srch(arr: list, index: int):
+    left = 0
+    right = len(arr)-1
+    while left <= right:
+        mid = (left + right) // 2
+        if arr[mid] == index:
+            return mid
+        elif arr[mid] < index:
+            left = mid + 1
+        else:
+            right = mid - 1
+    return -1
 
 
 def rec_bin_srch(arr: list, x: int, l=0, r=None):
@@ -32,3 +42,5 @@ if __name__ == "__main__":
         print(rec_bin_srch(urr, 99))
     except ValueError:
         print(-1)
+
+    print(cycle_bin_srch(array, 54))
