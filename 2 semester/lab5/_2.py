@@ -5,15 +5,14 @@ CHATGPT ТУПОЙ УБЛЮДОК ОН НЕ УМЕЕТ КОДИТЬ МРАЗЬ �
 '''
 
 
-def bin_search(arr, key, low, high):  # В этом есть необходимость, поскольку если функция вдруг выбросит -1,
-    # ничего не получится, а low == 0 нам не факт, что подойдет
-    while low <= high:
-        mid = (low + high) // 2
+def bin_search(arr: list, key, l: int, r: int) -> int:  # В этом есть необходимость
+    while l <= r:
+        mid = (l + r) // 2
         if arr[mid] < key:
-            low = mid + 1
+            l = mid + 1
         else:
-            high = mid - 1
-    return low
+            r = mid - 1
+    return l
 
 
 def bin_paste_sort(arr: list):
@@ -23,12 +22,11 @@ def bin_paste_sort(arr: list):
         key = arr[i]
         k = bin_search(arr, key, 0, j)
 
-        # Сдвигаем элементы вправо
         while j >= k:
             arr[j + 1] = arr[j]
             j -= 1
 
-        arr[k] = key  # Вставляем элемент на нужное место
+        arr[k] = key
 
 
 if __name__ == "__main__":
