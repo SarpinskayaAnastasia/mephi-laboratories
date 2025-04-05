@@ -111,11 +111,17 @@ class StudentsGrades:
     def import_from_tuple(cls, data: tuple[str, str, int]):
         return cls(*data)
 
-## почему не так:
-    # def __lt__(self, other):
-    #     if not isinstance(other, StudentsGrades):
-    #         return NotImplemented
-    #     return (self.subject, -self.mark, self.name) < (other.subject, -other.mark, other.name)
+    '''почему не так?
+    def __lt__(self, other):
+        if not isinstance(other, StudentsGrades):
+            return NotImplemented
+        return (self.subject, -self.mark, self.name) < (other.subject, -other.mark, other.name)
+    '''
+
+    '''
+    пока не знаю, я помню, что на курсах по питону нас учили делать именно так,
+    проверю - узнаю, можно ли через кортежи
+    '''
 
     '''предмет -> оценка (по убыванию) -> имя'''
     def __lt__(self, other):
