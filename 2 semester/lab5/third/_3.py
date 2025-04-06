@@ -51,7 +51,8 @@ def update_all_dbs(name: str, subject: str, mark: int):
     subjects.add(subject)
     update_grades(name, mark)
 
-def print_top_students(grades_stats, top_n=3):
+
+def print_top_students(top_n=3):
     if not grades_stats:
         print("Нет данных о студентах")
         return
@@ -71,24 +72,22 @@ if __name__ == "__main__":
                  ("Петров", "Информатика", 97),
                  ("Сидоров", "Физика", 85)
                  ]
-
+    print("Отсортированные данные:")
     bin_paste_sort(TEST_DATA, key=lambda x: (x[1], -x[2], x[0]))
     print(*TEST_DATA, sep='\n')
-
-    print()
 
     for args in TEST_DATA:
         update_all_dbs(*args)
 
+    print()
+    print("Студенты с оценкой 85 по предмету Математика:")
     result = students_db.get_value(tuple_to_str("Математика", 85))
     print(*result, sep='\n')
 
     print()
+    print("Средние оценки по предметам:")
     for sub in subjects:
         print(f"{sub}: {sub_statistics.get_value(sub)[2]:.2f}")
 
-    #print()
-    #print(*[(i[0], i[3]) for i in grades_stats[:3]], sep='\n')
-
     print()
-    print_top_students(grades_stats)
+    print_top_students()
