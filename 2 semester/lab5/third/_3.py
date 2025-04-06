@@ -51,6 +51,14 @@ def update_all_dbs(name: str, subject: str, mark: int):
     subjects.add(subject)
     update_grades(name, mark)
 
+def print_top_students(grades_stats):
+    if not grades_stats:
+        print("Нет данных о студентах")
+        return
+    print("Лучшие студенты:")
+    for i, student in enumerate(grades_stats, 1):
+        print(f"{i}. {student[0]}: {student[3]:.2f}")
+
 
 if __name__ == "__main__":
     TEST_DATA = [("Иванов", "Математика", 85),
@@ -79,5 +87,8 @@ if __name__ == "__main__":
     for sub in subjects:
         print(f"{sub}: {sub_statistics.get_value(sub)[2]:.2f}")
 
+    #print()
+    #print(*[(i[0], i[3]) for i in grades_stats[:3]], sep='\n')
+
     print()
-    print(*[(i[0], i[3]) for i in grades_stats[:3]], sep='\n')
+    print_top_students(grades_stats)
