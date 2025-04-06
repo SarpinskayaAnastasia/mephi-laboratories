@@ -51,12 +51,12 @@ def update_all_dbs(name: str, subject: str, mark: int):
     subjects.add(subject)
     update_grades(name, mark)
 
-def print_top_students(grades_stats):
+def print_top_students(grades_stats, top_n=3):
     if not grades_stats:
         print("Нет данных о студентах")
         return
     print("Лучшие студенты:")
-    for i, student in enumerate(grades_stats, 1):
+    for i, student in enumerate(grades_stats[:top_n], 1):
         print(f"{i}. {student[0]}: {student[3]:.2f}")
 
 
