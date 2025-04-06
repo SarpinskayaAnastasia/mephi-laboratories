@@ -10,86 +10,29 @@ def tuple_to_str(subject: str, mark: int) -> str:
     return str(mark) + subject + str(mark)
 
 
-class StudentsGrades:
-    def __init__(self, name: str, subject: str, mark: int):
-        self.name = name
-        self.subject = subject
-        self.mark = mark
-        self.__add_to_students_db()
-        self.__update_sub_stats()
-        subjects.add(self.subject)
+def add_to_students_db(name: str, subject: str, mark: int):
+    key = tuple_to_str(subject, mark)
+    existing = students_db.get_value(key)
+    if existing is not None:
+        existing.append((name, subject, mark))
+    else:
+        students_db.insert_with_key(key, [(name, subject, mark)])
 
-    def __str__(self):
-        return f"({self.name}, {self.subject}, {self.mark})"
 
-    def __add_to_students_db(self):
-        key = tuple_to_str(self.subject, self.mark)
-        existing = students_db.get_value(key)
-        if existing is not None:
-            existing.append(self)
-        else:
-            students_db.insert_with_key(key, [self])
+def update_sub_stats(name: str, subject: str, mark: int):
+    existing = sub_statistics.get_value(subject)
+    if existing is not None:
+        existing[0] += mark
+        existing[1] += 1
+        existing[2] = existing[0] / existing[1]
+    else:
+        sub_statistics.insert_with_key(subject, [mark, 1, mark])
 
-    def __update_sub_stats(self):
-        existing = sub_statistics.get_value(self.subject)
-        if existing is not None:
-            existing[0] += self.mark
-            existing[1] += 1
-            existing[2] = existing[0] / existing[1]
-        else:
-            sub_statistics.insert_with_key(self.subject, [self.mark, 1, self.mark])
 
-    @classmethod
-    def import_from_tuple(cls, data: tuple[str, str, int]):
-        return cls(*data)
-
-    '''предмет -> оценка (по убыванию) -> имя'''
-
-    def __lt__(self, other):
-        if isinstance(other, StudentsGrades):
-            if self.subject == other.subject:
-                if self.mark == other.mark:
-                    return self.name < other.name
-                return self.mark > other.mark
-            return self.subject < other.subject
-        return NotImplemented
-
-    def __le__(self, other):
-        if isinstance(other, StudentsGrades):
-            if self.subject == other.subject:
-                if self.mark == other.mark:
-                    return self.name <= other.name
-                return self.mark >= other.mark
-            return self.subject <= other.subject
-        return NotImplemented
-
-    def __gt__(self, other):
-        if isinstance(other, StudentsGrades):
-            if self.subject == other.subject:
-                if self.mark == other.mark:
-                    return self.name > other.name
-                return self.mark < other.mark
-            return self.subject > other.subject
-        return NotImplemented
-
-    def __ge__(self, other):
-        if isinstance(other, StudentsGrades):
-            if self.subject == other.subject:
-                if self.mark == other.mark:
-                    return self.name >= other.name
-                return self.mark <= other.mark
-            return self.subject >= other.subject
-        return NotImplemented
-
-    def __eq__(self, other):
-        if isinstance(other, StudentsGrades):
-            return (self.subject == other.subject) and (self.mark == other.mark) and (self.name == other.name)
-        return NotImplemented
-
-    def __ne__(self, other):
-        if isinstance(other, StudentsGrades):
-            return (self.subject != other.subject) or (self.mark != other.mark) or (self.name != other.name)
-        return NotImplemented
+def update_all_dbs(name: str, subject: str, mark: int):
+    add_to_students_db(name, subject, mark)
+    update_sub_stats(name, subject, mark)
+    subjects.add(subject)
 
 
 if __name__ == "__main__":
@@ -103,12 +46,14 @@ if __name__ == "__main__":
                  ("Петров", "Информатика", 97),
                  ("Сидоров", "Физика", 85)
                  ]
-    students = [StudentsGrades.import_from_tuple(t) for t in TEST_DATA]
 
-    bin_paste_sort(students)
-    print(*students, sep='\n')
+    bin_paste_sort(TEST_DATA, key=lambda x: (x[1], -x[2], x[0]))
+    print(*TEST_DATA, sep='\n')
 
     print()
+
+    for args in TEST_DATA:
+        update_all_dbs(*args)
 
     result = students_db.get_value(tuple_to_str("Математика", 85))
     print(*result, sep='\n')
