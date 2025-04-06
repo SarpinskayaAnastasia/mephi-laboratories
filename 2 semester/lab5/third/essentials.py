@@ -65,11 +65,11 @@ class OnceConnected:
 
     @is_empty
     def find_node_content(self, key: str, searching=False):
-        prev = None  # Для хранения предыдущего узла
-        for node in self:  # Используем итератор вместо ручного обхода
+        prev = None
+        for node in self:
             if node == key:
                 return node if searching else prev
-            prev = node  # Запоминаем предыдущий узел
+            prev = node
         raise ValueError(f"Node with content {key} doesn't exist")
 
     def __push_top(self, node_item: OnceNode):  # push to top
@@ -148,6 +148,8 @@ class HashTable:
             except ValueError:
                 return None
         predicted_node = self.data[index].top
+        if predicted_node is None:
+            return None
         if predicted_node.key != key:
             return None
         return predicted_node.data
@@ -161,6 +163,8 @@ class HashTable:
             except ValueError:
                 return None
         predicted_node = self.data[index].top
+        if predicted_node is None:
+            return None
         if predicted_node.key != key:
             return None
         self.length -= 1
