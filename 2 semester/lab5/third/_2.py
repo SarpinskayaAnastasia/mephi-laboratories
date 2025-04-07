@@ -15,15 +15,7 @@ def bin_paste_sort(arr: list, key=lambda x: x):
         key_val = key(current)
         insert_pos = bin_search(arr, key_val, 0, i - 1, key)
 
-        # Сдвигаем элементы вправо, чтобы освободить место
         for j in range(i, insert_pos, -1):
             arr[j] = arr[j - 1]
 
         arr[insert_pos] = current
-
-
-if __name__ == "__main__":
-    arr = [3, 4, 5, 6, 3, 3, 2, 53443, 23, 436, 7, 56, 24, 24, 24, 7, 624, 534, 542422, 3, 4, 35, 63, 2]
-    print(f'before: {arr}')
-    bin_paste_sort(arr)
-    print(f'after: {arr}')

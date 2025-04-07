@@ -1,4 +1,5 @@
-def bin_search(arr: list, key_val, l: int, r: int, key=lambda x: x) -> int:
+def bin_search(arr: list, key_val, l: int, r: int, key=lambda x: x) -> int:  # здесь мы ищем не индекс искомого
+    # элемента, а индекс, куда нужно вставить этот элемент!
     while l <= r:
         mid = (l + r) // 2
         if key(arr[mid]) < key_val:
@@ -15,7 +16,6 @@ def bin_paste_sort(arr: list, key=lambda x: x):
         key_val = key(current)
         insert_pos = bin_search(arr, key_val, 0, i - 1, key)
 
-        # Сдвигаем элементы вправо, чтобы освободить место
         for j in range(i, insert_pos, -1):
             arr[j] = arr[j - 1]
 
