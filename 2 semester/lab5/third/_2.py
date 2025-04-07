@@ -1,7 +1,7 @@
 def bin_search(arr: list, key_val, l: int, r: int, key=lambda x: x) -> int:
     while l <= r:
         mid = (l + r) // 2
-        if key(arr[mid]) < key_val:
+        if key(arr[mid]) <= key_val:
             l = mid + 1
         else:
             r = mid - 1

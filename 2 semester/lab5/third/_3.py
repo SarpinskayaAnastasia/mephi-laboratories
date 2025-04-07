@@ -35,14 +35,16 @@ def update_grades(name: str, mark: int):
         grades_stats.append([name, mark, 1, mark])
     else:
         target = [name, mark, 1, mark]
+        is_found = False
         for t in grades_stats:
             if t[0] == name:
                 t[1] += target[1]
                 t[2] += target[2]
                 t[3] = t[1] / t[2]
-                return None
-        grades_stats.append(target)
-    only_shift(grades_stats, len(grades_stats) - 1, key=lambda x: -x[3])
+                is_found = True
+        if not is_found:
+            grades_stats.append(target)
+    bin_paste_sort(grades_stats, key=lambda x: -x[3])
 
 
 def update_all_dbs(name: str, subject: str, mark: int):
@@ -70,7 +72,10 @@ if __name__ == "__main__":
                  ("Сидоров", "Информатика", 95),
                  ("Иванов", "Информатика", 82),
                  ("Петров", "Информатика", 97),
-                 ("Сидоров", "Физика", 85)
+                 ("Сидоров", "Физика", 85),
+                 ("Ковалёва", "Математика", 99),
+                 ("Ковалёва", "Физика", 95),
+                 ("Ковалёва", "Информатика", 93)
                  ]
     print("Отсортированные данные:")
     bin_paste_sort(TEST_DATA, key=lambda x: (x[1], -x[2], x[0]))
@@ -90,4 +95,4 @@ if __name__ == "__main__":
         print(f"{sub}: {sub_statistics.get_value(sub)[2]:.2f}")
 
     print()
-    print_top_students()
+    print_top_students(5)
