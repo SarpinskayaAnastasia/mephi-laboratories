@@ -1,4 +1,4 @@
-def cycle_bin_srch(arr: list, x: int, l=0, r=None):
+def cycle_bin_srch(arr: list, x: int, l=0, r=None): # Временная сложность: O(log n); Пространственная сложность: O(1)
     if r is None:  # первая обработка значений в самом-самом начале
         r = len(arr) - 1  # три сценария: либо n > 1, либо n == 1, либо n == 0
         if not r:
@@ -19,7 +19,7 @@ def cycle_bin_srch(arr: list, x: int, l=0, r=None):
     return -1
 
 
-def rec_bin_srch(arr: list, x: int, l=0, r=None):
+def rec_bin_srch(arr: list, x: int, l=0, r=None): # Временная сложность: O(log n); Пространственная сложность: O(log n)
     if r is None:  # первая обработка значений в самом-самом начале
         r = len(arr) - 1  # три сценария: либо n > 1, либо n == 1, либо n == 0
         if not r:
