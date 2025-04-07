@@ -40,7 +40,7 @@ def rec_bin_srch(arr: list, x: int, l=0, r=None):
 
 if __name__ == "__main__":
     array = sorted([3, 5435, 23, 45, 2, 3, 5, 3, 2, 5, 67, 7, 54, 3, 24, 6, 7, 4, 3, 66, 4, 2, 4, 6, 4, 43, 5, 55])
-    print(rec_bin_srch(array, 54, 0, len(array)), array.index(54))
+    print(rec_bin_srch(array, 54, 0, len(array)), "Проверка правильного индекса:", array.index(54))
     arr = [1]
     print(rec_bin_srch(arr, 1))
     print(rec_bin_srch(arr, 5))
@@ -48,6 +48,13 @@ if __name__ == "__main__":
     try:
         print(rec_bin_srch(urr, 99))
     except ValueError:
-        print(-1)
+        print('SHEESH')
 
+    print()
     print(cycle_bin_srch(array, 54))
+    print(cycle_bin_srch(arr, 1))
+    print(cycle_bin_srch(arr, 5))
+    try:
+        print(cycle_bin_srch(urr, 99))
+    except ValueError:
+        print('SHEESH')
