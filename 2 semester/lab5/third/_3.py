@@ -1,4 +1,4 @@
-from _2 import bin_paste_sort
+from _2 import bin_paste_sort, only_shift
 from essentials import HashTable
 
 students_db = HashTable(32)  # {(subject, mark): [students]}
@@ -42,7 +42,7 @@ def update_grades(name: str, mark: int):
                 t[3] = t[1] / t[2]
                 return None
         grades_stats.append(target)
-    bin_paste_sort(grades_stats, key=lambda x: -x[3])
+    only_shift(grades_stats, len(grades_stats) - 1, key=lambda x: -x[3])
 
 
 def update_all_dbs(name: str, subject: str, mark: int):
