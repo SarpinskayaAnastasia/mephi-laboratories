@@ -98,16 +98,17 @@ class LinkedList:
             needed_node = self.find_n_node(item, True)
             return needed_node
         elif isinstance(item, slice):
-            start, stop, step = item.indices(self.size)  # start, stop, step - тип int
+            start, stop, step = item.indices(self.size)
             result = LinkedList()
-            current_node = self.find_n_node(start, True)
-            current_index = start
+            current_index = 0
+            current_node = self.top
+
             while current_node and current_index < stop:
-                result.append(current_node)
-                current_index += step
-            else:
-                if current_node:
-                    current_node.set_next(None)
+                if current_index >= start and (current_index - start) % step == 0:
+                    node = OnceNode(current_node.data)
+                    result.append(node)
+                current_node = current_node.next
+                current_index += 1
             return result
         raise TypeError("Invalid argument type")
 
@@ -153,4 +154,4 @@ if __name__ == "__main__":
     linked_list.append(OnceNode(9))
     linked_list.append(OnceNode(82))
     linked_list.append(OnceNode(10))
-    print(linked_list[2:5])
+    print(linked_list[:66])
