@@ -16,6 +16,11 @@ class OnceNode:
             return self.data != other.data
         return NotImplemented
 
+    def __lt__(self, other):
+        if isinstance(other, OnceNode):
+            return self.data < other.data
+        return NotImplemented
+
     def set_next(self, node):
         self.next = node
 
@@ -77,9 +82,9 @@ class LinkedList:
             prev = node
         raise ValueError(f"Node with content {data} doesn't exist")
 
-    @is_empty
-    @is_n_correct  # оба декоратора выбрасывают IndexError.
-    # Но если у нас и список пустой, и индекс говно - вылезет жалоба на индекс, а не на пустой список
+    @is_n_correct
+    @is_empty  # оба декоратора выбрасывают IndexError.
+    # Но если у нас и список пустой, и индекс говно - вылезет жалоба на пустой список, а не на индекс
     def find_n_node(self, index: int, searching=False):
         if searching and not index:
             return self.top
@@ -96,15 +101,16 @@ class LinkedList:
     def __getitem__(self, item):
         if isinstance(item, int):
             needed_node = self.find_n_node(item, True)
+            needed_node.set_next(None)
             return needed_node
         elif isinstance(item, slice):
             start, stop, step = item.indices(self.size)
             result = LinkedList()
-            current_index = 0
-            current_node = self.top
+            current_index = start
+            current_node = self.find_n_node(start, True)
 
             while current_node and current_index < stop:
-                if current_index >= start and (current_index - start) % step == 0:
+                if (current_index - start) % step == 0:
                     node = OnceNode(current_node.data)
                     result.append(node)
                 current_node = current_node.next
@@ -124,6 +130,15 @@ class LinkedList:
             self.size += 1
         except IndexError:  # если список пуст, без разницы, как добавить наш элемент
             self.__push_top(node_item)
+
+    def extend(self, node_list):
+        try:
+            old_tail = self.__find_tail()
+            old_tail.set_next(node_list)
+            self.size += node_list.size
+        except IndexError:
+            self.top = node_list
+            self.size = node_list.size
 
     @is_empty
     def pop_top(self) -> OnceNode:
@@ -154,4 +169,4 @@ if __name__ == "__main__":
     linked_list.append(OnceNode(9))
     linked_list.append(OnceNode(82))
     linked_list.append(OnceNode(10))
-    print(linked_list[:66])
+    print(linked_list[2:6:2])
