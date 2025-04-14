@@ -98,7 +98,7 @@ class LinkedList:
             needed_node = self.find_n_node(item, True)
             return needed_node
         elif isinstance(item, slice):
-            start, stop, step = item.indices(self.size)
+            start, stop, step = item.indices(self.size)  # start, stop, step - тип int
             result = LinkedList()
             current_node = self.find_n_node(start, True)
             current_index = start
