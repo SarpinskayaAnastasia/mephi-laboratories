@@ -1,49 +1,82 @@
-from linked_list import LinkedList, OnceNode
+from linked_list import OnceNode
 
 
-def merge_sort(array):
-    if len(array) <= 1:
-        return array
+class Solution:
+    def split_list(self, head):
+        # Метод "бегунков" (slow и fast) для разделения списка пополам
+        slow = head
+        fast = head.next
 
-    # Разделение массива
-    mid = len(array) // 2
-    left = merge_sort(array[:mid])
-    right = merge_sort(array[mid:])
+        while fast and fast.next:
+            slow = slow.next
+            fast = fast.next.next
 
-    # Слияние двух отсортированных частей
-    return merge(left, right)
+        right = slow.next  # Начало правой части
+        slow.next = None  # Разрываем связь между левой и правой частями
 
+        return head, right  # left = head, right = slow.next
 
-def merge(left, right):
-    result = LinkedList()
-    i = j = 0
-    # Сравнение элементов и объединение
-    while i < len(left) and j < len(right):
-        if left[i] < right[j]:
-            result.append(left[i])
-            i += 1
-        else:
-            result.append(right[j])
-            j += 1
-    else:
-        i -= 1 if i >= len(left) else 0
-        j -= 1 if j >= len(right) else 0
+    def merge(self, left, right):
+        # Фиктивный узел для упрощения кода
+        dummy = OnceNode(0)
+        tail = dummy
 
-    # Добавление оставшихся элементов
-    result.extend(left[i:])
-    result.extend(right[j:])
+        while left and right:
+            if left < right:
+                tail.next = left
+                left = left.next
+            else:
+                tail.next = right
+                right = right.next
+            tail = tail.next
 
-    return result
+        # Присоединяем оставшиеся узлы
+        tail.next = left if left else right
+
+        return dummy.next  # Истинное начало списка
+
+    def merge_sort(self, head):
+        # Базовый случай: пустой список или один элемент
+        if head is None or head.next is None:
+            return head
+
+        # Разделение списка на две части
+        left, right = self.split_list(head)
+
+        # Рекурсивная сортировка каждой части
+        left_sorted = self.merge_sort(left)
+        right_sorted = self.merge_sort(right)
+
+        # Слияние двух отсортированных списков
+        return self.merge(left_sorted, right_sorted)
+
+    def print_list(self, head):
+        while head:
+            print(head, end=" -> " if head.next else "\n")
+            head = head.next
 
 
 if __name__ == "__main__":
-    linked_list = LinkedList()
-    linked_list.append(OnceNode(38))
-    linked_list.append(OnceNode(27))
-    linked_list.append(OnceNode(43))
-    linked_list.append(OnceNode(3))
-    linked_list.append(OnceNode(9))
-    linked_list.append(OnceNode(82))
-    linked_list.append(OnceNode(10))
-    sorted_linked_list = merge_sort(linked_list)
-    print("\nОтсортированный связный список:", sorted_linked_list)
+    sol = Solution()
+    # Создаём список вручную (без LinkedList)
+    node1 = OnceNode(38)
+    node2 = OnceNode(27)
+    node3 = OnceNode(43)
+    node4 = OnceNode(3)
+    node5 = OnceNode(9)
+    node6 = OnceNode(82)
+    node7 = OnceNode(10)
+
+    node1.next = node2
+    node2.next = node3
+    node3.next = node4
+    node4.next = node5
+    node5.next = node6
+    node6.next = node7
+
+    print("Исходный список:")
+    sol.print_list(node1)
+
+    sorted_head = sol.merge_sort(node1)
+    print("\nОтсортированный список:")
+    sol.print_list(sorted_head)
