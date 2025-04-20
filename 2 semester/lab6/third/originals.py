@@ -1,16 +1,3 @@
-def merge_sort(array):
-    if len(array) <= 1:
-        return array
-
-    # Разделение массива
-    mid = len(array) // 2
-    left = merge_sort(array[:mid])
-    right = merge_sort(array[mid:])
-
-    # Слияние двух отсортированных частей
-    return merge(left, right)
-
-
 def merge(left, right):
     result = []
     i = j = 0
@@ -28,6 +15,20 @@ def merge(left, right):
     result.extend(right[j:])
 
     return result
+
+
+def merge_sort(array):
+    if len(array) <= 1:
+        return array
+
+    # Разделение массива
+    mid = len(array) // 2
+    left = merge_sort(array[:mid])
+    right = merge_sort(array[mid:])
+
+    # Слияние двух отсортированных частей
+    return merge(left, right)
+
 
 
 def partition(arr, low, high):
