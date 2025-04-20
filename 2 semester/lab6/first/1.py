@@ -1,56 +1,52 @@
-from linked_list import OnceNode
+from linked_list import OnceNode, LinkedList
 
 
 class Solution:
-    def split_list(self, head):
-        # Метод "бегунков" (slow и fast) для разделения списка пополам
+    @staticmethod
+    def split_list(head: OnceNode) -> tuple[OnceNode, OnceNode]:
         slow = head
         fast = head.next
 
-        while fast and fast.next:
+        while fast is not None and fast.next is not None:
             slow = slow.next
             fast = fast.next.next
 
-        right = slow.next  # Начало правой части
-        slow.next = None  # Разрываем связь между левой и правой частями
+        right = slow.next
+        slow.next = None
 
         return head, right  # left = head, right = slow.next
 
-    def merge(self, left, right):
-        # Фиктивный узел для упрощения кода
-        dummy = OnceNode(0)
-        tail = dummy
+    @staticmethod
+    def merge(left: OnceNode, right: OnceNode) -> OnceNode:
+        dummy = OnceNode(None)
+        pseudo_head = dummy
 
         while left and right:
             if left < right:
-                tail.next = left
+                pseudo_head.next = left
                 left = left.next
             else:
-                tail.next = right
+                pseudo_head.next = right
                 right = right.next
-            tail = tail.next
+            pseudo_head = pseudo_head.next
 
-        # Присоединяем оставшиеся узлы
-        tail.next = left if left else right
+        pseudo_head.next = left if left else right
 
-        return dummy.next  # Истинное начало списка
+        return dummy.next
 
-    def merge_sort(self, head):
-        # Базовый случай: пустой список или один элемент
+    def merge_sort(self, head: OnceNode) -> OnceNode or None:
         if head is None or head.next is None:
             return head
 
-        # Разделение списка на две части
         left, right = self.split_list(head)
 
-        # Рекурсивная сортировка каждой части
         left_sorted = self.merge_sort(left)
         right_sorted = self.merge_sort(right)
 
-        # Слияние двух отсортированных списков
         return self.merge(left_sorted, right_sorted)
 
-    def print_list(self, head):
+    @staticmethod
+    def print_list(head):
         while head:
             print(head, end=" -> " if head.next else "\n")
             head = head.next
@@ -58,25 +54,17 @@ class Solution:
 
 if __name__ == "__main__":
     sol = Solution()
-    # Создаём список вручную (без LinkedList)
-    node1 = OnceNode(38)
-    node2 = OnceNode(27)
-    node3 = OnceNode(43)
-    node4 = OnceNode(3)
-    node5 = OnceNode(9)
-    node6 = OnceNode(82)
-    node7 = OnceNode(10)
-
-    node1.next = node2
-    node2.next = node3
-    node3.next = node4
-    node4.next = node5
-    node5.next = node6
-    node6.next = node7
-
+    linked_list = LinkedList()
+    linked_list.append(38)
+    linked_list.append(27)
+    linked_list.append(43)
+    linked_list.append(3)
+    linked_list.append(9)
+    linked_list.append(82)
+    linked_list.append(10)
     print("Исходный список:")
-    sol.print_list(node1)
+    sol.print_list(linked_list.head)
 
-    sorted_head = sol.merge_sort(node1)
+    sorted_head = sol.merge_sort(linked_list.head)
     print("\nОтсортированный список:")
     sol.print_list(sorted_head)
