@@ -1,5 +1,6 @@
 import random
 import time
+import heapq
 
 
 class MergeSort:
@@ -118,6 +119,85 @@ class InPlaceMergeSort:
             k += 1
 
 
+class Heapify:
+    '''
+    @staticmethod
+    def make_heap(arr):
+        heap = ["ничего", arr[0]]
+        for i in range(2, len(arr) + 1):
+            heap.append(arr[i - 1])
+            while heap[i // 2] >= heap[i]:
+                heap[i // 2], heap[i] = heap[i], heap[i // 2]
+        return heap
+
+    @staticmethod
+    def del_head(heap_arr):
+        heap_arr[1], heap_arr[-1] = heap_arr[-1], heap_arr[1]
+        deleted_item = heap_arr.pop()
+        i = 1
+        while 2 * i < len(heap_arr):
+            if 2 * i + 1 < len(heap_arr):
+                min_ind = 2 * i if heap_arr[2 * i] < heap_arr[2 * i + 1] else 2 * i + 1
+            else:
+                min_ind = 2 * i
+
+            if heap_arr[i] <= heap_arr[min_ind]:
+                break
+
+            heap_arr[i], heap_arr[min_ind] = heap_arr[min_ind], heap_arr[i]
+            i = min_ind
+
+        return deleted_item
+
+    def sort(self, arr):
+        new_array = []
+        heapified_array = self.make_heap(arr)
+        while len(heapified_array) > 1:
+            new_array.append(self.del_head(heapified_array))
+        return new_array
+    '''
+
+    def heapify(self, arr, n, i):
+        largest = i  # Initialize largest as root
+        l = 2 * i + 1  # left = 2*i + 1
+        r = 2 * i + 2  # right = 2*i + 2
+        # See if left child of root exists and is
+        # greater than root
+        if l < n and arr[i] < arr[l]:
+            largest = l
+        # See if right child of root exists and is
+        # greater than root
+        if r < n and arr[largest] < arr[r]:
+            largest = r
+
+        # Change root, if needed
+        if largest != i:
+            (arr[i], arr[largest]) = (arr[largest], arr[i])  # swap
+            # Heapify the root.
+            self.heapify(arr, n, largest)
+
+    def sort(self, arr):
+        n = len(arr)
+        # Build a maxheap.
+        # Since last parent will be at (n//2) we can start at that location.
+        for i in range(n // 2, -1, -1):
+            self.heapify(arr, n, i)
+        # One by one extract elements
+        for i in range(n - 1, 0, -1):
+            (arr[i], arr[0]) = (arr[0], arr[i])  # swap
+            self.heapify(arr, i, 0)
+
+
+class Heapify_bib:
+    @staticmethod
+    def sort(arr):
+        heapq.heapify(arr)
+        result = []
+        while arr:
+            result.append(heapq.heappop(arr))
+        return result
+
+
 def benchmark(sizes):
     line = "-" * 40
     header = f"{'Метод':30} | Время (мс)"
@@ -132,14 +212,19 @@ def benchmark(sizes):
         print(line)
 
     std = [
-        ("Сортировка слиянием", MergeSort.sort, True),
-        ("Быстрая сортировка", QuickSort.sort, True),
+        ("Сортировка слиянием", MergeSort().sort, True),
+        ("Быстрая сортировка", QuickSort().sort, True),
         ("Python sorted()", sorted, True),
     ]
     opt = [
-        ("QuickSort (медиана трёх)", OptimizedQuickSort.sort_median, True),
-        ("QuickSort (случайный pivot)", OptimizedQuickSort.sort_random, True),
-        ("In-place Merge Sort", InPlaceMergeSort.sort, False),
+        ("QuickSort (медиана трёх)", OptimizedQuickSort().sort_median, True),
+        ("QuickSort (случайный pivot)", OptimizedQuickSort().sort_random, True),
+        ("In-place Merge Sort", InPlaceMergeSort().sort, False),
+    ]
+
+    heapify = [
+        ("Heapify кастомная", Heapify().sort, False),
+        ("Heapify с библиотекой", Heapify_bib().sort, False)
     ]
 
     for size in sizes:
@@ -147,8 +232,12 @@ def benchmark(sizes):
         print(f"\nРазмер массива: {size}")
         run_algorithms("Обычные версии", std)
         run_algorithms("Оптимизированные версии", opt)
+        run_algorithms("Пирамидальные сортировки", heapify)
 
 
 if __name__ == "__main__":
+    urr = [3, 4, 5, 10, 5, 9, 6, 12, 40]
+
+    print(Heapify().sort(urr))
     sizes = [10 ** 3, 10 ** 4, 10 ** 5, 10 ** 6]
     benchmark(sizes)

@@ -46,7 +46,7 @@ class Solution:
         return self.merge(left_sorted, right_sorted)
 
     @staticmethod
-    def print_list(head):
+    def print_list(head: OnceNode):
         while head:
             print(head, end=" -> " if head.next else "\n")
             head = head.next

@@ -10,8 +10,9 @@ def natural_merge_sort(array):
     comparisons = 0
     n = len(array)
 
-    # Найти все естественные отсортированные подмассивы
+    # Найти все отсортированные подмассивы
     def find_runs(array):
+        nonlocal n
         runs = []
         start = 0
         for i in range(1, n):
