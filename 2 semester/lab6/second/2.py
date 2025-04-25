@@ -123,7 +123,7 @@ class Heapify:
     '''
     @staticmethod
     def make_heap(arr):
-        heap = ["ничего", arr[0]]
+        heap = [float('-inf')]
         for i in range(2, len(arr) + 1):
             heap.append(arr[i - 1])
             while heap[i // 2] >= heap[i]:
