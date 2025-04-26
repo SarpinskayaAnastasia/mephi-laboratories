@@ -124,7 +124,7 @@ class Heapify:
     @staticmethod
     def make_heap(arr):
         heap = [float('-inf')]
-        for i in range(2, len(arr) + 1):
+        for i in range(1, len(arr) + 1):
             heap.append(arr[i - 1])
             while heap[i // 2] >= heap[i]:
                 heap[i // 2], heap[i] = heap[i], heap[i // 2]
@@ -157,7 +157,7 @@ class Heapify:
         return new_array
     '''
 
-    def heapify(self, arr, n, i):
+    '''def heapify(self, arr, n, i):
         largest = i  # Initialize largest as root
         l = 2 * i + 1  # left = 2*i + 1
         r = 2 * i + 2  # right = 2*i + 2
@@ -185,7 +185,47 @@ class Heapify:
         # One by one extract elements
         for i in range(n - 1, 0, -1):
             (arr[i], arr[0]) = (arr[0], arr[i])  # swap
-            self.heapify(arr, i, 0)
+            self.heapify(arr, i, 0)'''
+
+    #my realisation
+    @staticmethod
+    def make_heap(arr):
+        heap = arr.copy()
+        n=len(heap)
+        for i in range(n//2-1, -1, -1):
+            Heapify._down(heap, i, n)
+        return heap
+
+    @staticmethod
+    def _down(heap, i, size):
+        smallest = i
+        left = 2*i+1
+        right = 2*i+2
+
+        if left < size and heap[left] < heap[smallest]:
+            smallest = left
+        if right < size and heap[right] < heap[smallest]:
+            smallest = right
+        if smallest != i:
+            heap[i], heap[smallest] = heap[smallest], heap[i]
+            Heapify._down(heap, smallest, size)
+            
+    @staticmethod
+    def del_head(heap):
+        if not heap: return None
+        smallest = heap[0]
+        heap[0]=heap[-1]
+        heap.pop()
+        Heapify._down(heap, 0, len(heap))
+        return smallest
+
+    def sort(self, arr):
+        heap = self.make_heap(arr)
+        sorted_arr = []
+        while heap:
+            sorted_arr.append(self.del_head(heap))
+        return sorted_arr
+
 
 
 class Heapify_bib:
