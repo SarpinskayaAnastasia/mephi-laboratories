@@ -187,20 +187,20 @@ class Heapify:
             (arr[i], arr[0]) = (arr[0], arr[i])  # swap
             self.heapify(arr, i, 0)'''
 
-    #my realisation
+    # my realisation
     @staticmethod
     def make_heap(arr):
         heap = arr.copy()
-        n=len(heap)
-        for i in range(n//2-1, -1, -1):
+        n = len(heap)
+        for i in range(n // 2 - 1, -1, -1):
             Heapify._down(heap, i, n)
         return heap
 
     @staticmethod
     def _down(heap, i, size):
         smallest = i
-        left = 2*i+1
-        right = 2*i+2
+        left = 2 * i + 1
+        right = 2 * i + 2
 
         if left < size and heap[left] < heap[smallest]:
             smallest = left
@@ -209,12 +209,12 @@ class Heapify:
         if smallest != i:
             heap[i], heap[smallest] = heap[smallest], heap[i]
             Heapify._down(heap, smallest, size)
-            
+
     @staticmethod
     def del_head(heap):
         if not heap: return None
         smallest = heap[0]
-        heap[0]=heap[-1]
+        heap[0] = heap[-1]
         heap.pop()
         Heapify._down(heap, 0, len(heap))
         return smallest
@@ -225,7 +225,6 @@ class Heapify:
         while heap:
             sorted_arr.append(self.del_head(heap))
         return sorted_arr
-
 
 
 class Heapify_bib:
