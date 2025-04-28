@@ -22,21 +22,14 @@ def dfs(node: TreeNode) -> tuple[dict, dict]:
 
 
 def mirrorize(node: TreeNode):
+    if node is None:
+        return
     temp = node.left
     node.left = node.right
     node.right = temp
 
-    def _mirrorize(current: TreeNode):
-        if current is None:
-            return
-        tmp = current.left
-        current.left = current.right
-        current.right = tmp
-        _mirrorize(current.left)
-        _mirrorize(current.right)
-
-    _mirrorize(node.left)
-    _mirrorize(node.right)
+    mirrorize(node.left)
+    mirrorize(node.right)
 
 
 class BinaryTree:
