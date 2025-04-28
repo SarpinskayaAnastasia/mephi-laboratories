@@ -120,43 +120,6 @@ class InPlaceMergeSort:
 
 
 class Heapify:
-    '''
-    @staticmethod
-    def make_heap(arr):
-        heap = [float('-inf')]
-        for i in range(1, len(arr) + 1):
-            heap.append(arr[i - 1])
-            while heap[i // 2] >= heap[i]:
-                heap[i // 2], heap[i] = heap[i], heap[i // 2]
-        return heap
-
-    @staticmethod
-    def del_head(heap_arr):
-        heap_arr[1], heap_arr[-1] = heap_arr[-1], heap_arr[1]
-        deleted_item = heap_arr.pop()
-        i = 1
-        while 2 * i < len(heap_arr):
-            if 2 * i + 1 < len(heap_arr):
-                min_ind = 2 * i if heap_arr[2 * i] < heap_arr[2 * i + 1] else 2 * i + 1
-            else:
-                min_ind = 2 * i
-
-            if heap_arr[i] <= heap_arr[min_ind]:
-                break
-
-            heap_arr[i], heap_arr[min_ind] = heap_arr[min_ind], heap_arr[i]
-            i = min_ind
-
-        return deleted_item
-
-    def sort(self, arr):
-        new_array = []
-        heapified_array = self.make_heap(arr)
-        while len(heapified_array) > 1:
-            new_array.append(self.del_head(heapified_array))
-        return new_array
-    '''
-
     '''def heapify(self, arr, n, i):
         largest = i  # Initialize largest as root
         l = 2 * i + 1  # left = 2*i + 1
@@ -185,9 +148,10 @@ class Heapify:
         # One by one extract elements
         for i in range(n - 1, 0, -1):
             (arr[i], arr[0]) = (arr[0], arr[i])  # swap
-            self.heapify(arr, i, 0)'''
+            self.heapify(arr, i, 0)
+    '''
 
-    # my realisation
+    # my implementation
     @staticmethod
     def make_heap(arr):
         heap = arr.copy()
