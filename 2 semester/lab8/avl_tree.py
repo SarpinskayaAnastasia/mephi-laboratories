@@ -27,6 +27,27 @@ def push(new: Node, root: Node):
     return root
 
 
+def pop(val: int, node: Node) -> Node or None:
+    if not Node:
+        return None  # не нашли интересующий нас узел
+
+    if val < node.val:
+        node.left = pop(val, node.left)
+    elif val > node.val:
+        node.right = pop(val, node.right)
+    else:
+        if not node.left:
+            return node.right
+        elif not node.right:
+            return node.left
+        mln = node.right
+        while mln.left:
+            mln = mln.left
+        node.val = mln.val
+        node.right = pop(mln.val, node.right)
+    return node
+
+
 class BST:
     def __init__(self):
         self.root = None
@@ -41,14 +62,20 @@ class BST:
         else:
             self.root = push(new_node, self.root)
 
-    def inorder(self, node=None):
+    def po(self, val: int):
+        self.root = pop(val, self.root)
+
+    def find(self, value: int, node: Node = None) -> bool:
         if node is None:
             node = self.root
-        if node.left:
-            self.inorder(node.left)
-        yield node.val
-        if node.right:
-            self.inorder(node.right)
+        if node is None:
+            return False
+        if value == node.val:
+            return True
+        elif value < node.val:
+            return self.find(value, node.left)
+        else:
+            return self.find(value, node.right)
 
     def _calc_depths(self, node, current_depth):
         if not node:
@@ -133,6 +160,10 @@ class AVL(BST):
     def pu(self, new_node: Node):
         super().pu(new_node)
 
+    @avlize
+    def po(self, val: int):
+        super().po(val)
+
 
 def gen_random(lot: int = 1000):
     while lot:
@@ -160,12 +191,23 @@ def benchmark(tree_class, array):
     start = time.time()
     for v in array:
         tree.pu(Node(v))
+    print_tree(tree.root)
+    print('------------------------')
     elapsed = time.time() - start
     tree.calculate_depths()
     return elapsed, tree.av_depth, tree.max_depth
 
 
-if __name__ == "__main__":
+def print_tree(node, prefix="", is_left=True, max_depth=5, depth=0):
+    """Красивый вывод бинарного дерева в консоль."""
+    if node is None or depth >= max_depth:
+        return
+    print_tree(node.right, prefix + ("│   " if is_left else "    "), False, max_depth, depth + 1)
+    print(prefix + ("└── " if is_left else "┌── ") + str(node.val))
+    print_tree(node.left, prefix + ("    " if is_left else "│   "), True, max_depth, depth + 1)
+
+
+def main():
     datasets = {
         "random": list(gen_random()),
         "sorted": list(gen_sorted()),
@@ -180,3 +222,7 @@ if __name__ == "__main__":
 
         print(f"BST: time = {bst_result[0]:.4f}s, avg depth = {bst_result[1]:.2f}, max depth = {bst_result[2]}")
         print(f"AVL: time = {avl_result[0]:.4f}s, avg depth = {avl_result[1]:.2f}, max depth = {avl_result[2]}")
+
+
+if __name__ == "__main__":
+    main()
