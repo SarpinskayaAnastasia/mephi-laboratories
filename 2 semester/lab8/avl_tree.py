@@ -24,7 +24,7 @@ def update_height(node: Node):
     node.height = 1 + max(left_height, right_height)
 
 
-def push(new: Node, root: Node):
+def push(new: Node, root: Node) -> Node:
     if not root:
         return new
     if new.val >= root.val:
@@ -35,6 +35,22 @@ def push(new: Node, root: Node):
     # а продолжаем ее работу
     root.height = 1 + max(root.left.height if root.left else -1, root.right.height if root.right else -1)
     return root
+
+
+def successor(node: Node) -> Node:
+    """Выбираем в случае, если высота правого поддерева меньше"""
+    mln = node.right
+    while mln.left:
+        mln = mln.left
+    return mln
+
+
+def predecessor(node: Node) -> Node:
+    """А это - если высота левого поддерева меньше"""
+    mln = node.left
+    while mln.right:
+        mln = mln.right
+    return mln
 
 
 def pop(val: int, root: Node) -> Node or None:
@@ -54,9 +70,7 @@ def pop(val: int, root: Node) -> Node or None:
         # Эти две штуки подходят и для случая с 1 потомком, и для листов. Почему?
         # Когда мы не имеем потомков, мы возвращаем None. И этот None мы записываем в потомки родителя.
         # Таким образом мы легко и просто стираем лист.
-        mln = root.right
-        while mln.left:
-            mln = mln.left
+        mln = successor(root) if root.right.height < root.left.height else predecessor(root)
         root.val = mln.val
         root.right = pop(mln.val, root.right)
     root.height = 1 + max(root.left.height if root.left else -1, root.right.height if root.right else -1)
