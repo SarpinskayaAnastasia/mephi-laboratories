@@ -11,7 +11,12 @@
 
 ### Создание односвязного списка
 
-```
+```python
+class LinkedList:
+    def append(self, item: int):
+        pass
+
+
 linked_list = LinkedList()
 linked_list.append(38)
 linked_list.append(27)

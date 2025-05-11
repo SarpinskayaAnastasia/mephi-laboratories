@@ -15,6 +15,13 @@ class Node:
         self.val = content
         self.left = None
         self.right = None
+        self.height = 0  # по умолчанию лист
+
+
+def update_height(node: Node):
+    left_height = node.left.height if node.left else -1
+    right_height = node.right.height if node.right else -1
+    node.height = 1 + max(left_height, right_height)
 
 
 def push(new: Node, root: Node):
@@ -24,28 +31,47 @@ def push(new: Node, root: Node):
         root.right = push(new, root.right)
     else:
         root.left = push(new, root.left)
+    # Мы прописываем перерасчет только здесь, потому что мы после сравнений не выходим из функции,
+    # а продолжаем ее работу
+    root.height = 1 + max(root.left.height if root.left else -1, root.right.height if root.right else -1)
     return root
 
 
-def pop(val: int, node: Node) -> Node or None:
-    if not Node:
-        return None  # не нашли интересующий нас узел
+def pop(val: int, root: Node) -> Node or None:
+    if not root:
+        return None  # мы дошли до конца и не нашли интересующий нас узел.
+        # А None мы записываем в потомки родителя, у которого этот конкретный потомок уже был None
 
-    if val < node.val:
-        node.left = pop(val, node.left)
-    elif val > node.val:
-        node.right = pop(val, node.right)
-    else:
-        if not node.left:
-            return node.right
-        elif not node.right:
-            return node.left
-        mln = node.right
+    if val < root.val:
+        root.left = pop(val, root.left)
+    elif val > root.val:
+        root.right = pop(val, root.right)
+    else:  # НАШЛИ ЗНАЧЕНИЕ! УРААА
+        if not root.left:
+            return root.right
+        elif not root.right:
+            return root.left
+        # Эти две штуки подходят и для случая с 1 потомком, и для листов. Почему?
+        # Когда мы не имеем потомков, мы возвращаем None. И этот None мы записываем в потомки родителя.
+        # Таким образом мы легко и просто стираем лист.
+        mln = root.right
         while mln.left:
             mln = mln.left
-        node.val = mln.val
-        node.right = pop(mln.val, node.right)
-    return node
+        root.val = mln.val
+        root.right = pop(mln.val, root.right)
+    root.height = 1 + max(root.left.height if root.left else -1, root.right.height if root.right else -1)
+    return root
+
+
+def find(val: int, root: Node) -> bool:
+    if root is None:
+        return False
+    if val == root.val:
+        return True
+    elif val < root.val:
+        return find(val, root.left)
+    else:
+        return find(val, root.right)
 
 
 class BST:
@@ -56,73 +82,91 @@ class BST:
         self._total_leaf_depth = 0
         self._leaf_count = 0
 
+    @staticmethod
+    def is_root(func: Callable[P, R]) -> Callable[P, R]:
+        @functools.wraps(func)
+        def wrapper(self, *args: P.args, **kwargs: P.kwargs) -> R:
+            if self.root is None:
+                raise IndexError("tree doesn't exist (root is None)")
+            return func(self, *args, **kwargs)
+
+        return wrapper
+
     def pu(self, new_node: Node):
         if not self.root:
             self.root = new_node
         else:
             self.root = push(new_node, self.root)
 
+    @is_root
     def po(self, val: int):
         self.root = pop(val, self.root)
 
-    def find(self, value: int, node: Node = None) -> bool:
-        if node is None:
-            node = self.root
-        if node is None:
-            return False
-        if value == node.val:
-            return True
-        elif value < node.val:
-            return self.find(value, node.left)
-        else:
-            return self.find(value, node.right)
+    @is_root
+    def fi(self, value: int) -> bool:
+        return find(value, self.root)
 
     def _calc_depths(self, node, current_depth):
         if not node:
             return
 
-        self.max_depth = max(self.max_depth, current_depth)
-
-        if not (node.left or node.right):
+        if not node.height:
             self._total_leaf_depth += current_depth
             self._leaf_count += 1
 
         self._calc_depths(node.left, current_depth + 1)
         self._calc_depths(node.right, current_depth + 1)
 
+    @is_root
     def calculate_depths(self):
-        self.max_depth = 0
+        self.max_depth = self.root.height + 1
         self._calc_depths(self.root, 1)
 
-        if self._leaf_count > 0:
+        try:
             self.av_depth = self._total_leaf_depth / self._leaf_count
-        else:
+        except ZeroDivisionError:
             self.av_depth = 0
 
 
 class AVL(BST):
-    def height(self, node: Node) -> int:
-        if not node:
-            return 0
-        return 1 + max(self.height(node.left), self.height(node.right))
+    @staticmethod
+    def is_root(func: Callable[P, R]) -> Callable[P, R]:
+        @functools.wraps(func)
+        def wrapper(self, *args: P.args, **kwargs: P.kwargs) -> R:
+            if self.root is None:
+                raise IndexError("tree doesn't exist (root is None)")
+            return func(self, *args, **kwargs)
 
-    def get_balance(self, node: Node) -> int:
-        return self.height(node.left) - self.height(node.right) if node else 0
+        return wrapper
 
     @staticmethod
-    def rotate_left(z: Node) -> Node:
+    def get_balance(node: Node) -> int:
+        if not node:
+            return 0
+        height_l = node.left.height if node.left else 0
+        height_r = node.right.height if node.right else 0
+        return height_l - height_r
+
+    @staticmethod
+    def _rotate_left(z: Node) -> Node:
         y = z.right
         t2 = y.left
         y.left = z
         z.right = t2
+
+        update_height(z)
+        update_height(y)
         return y
 
     @staticmethod
-    def rotate_right(z: Node) -> Node:
+    def _rotate_right(z: Node) -> Node:
         y = z.left
         t3 = y.right
         y.right = z
         z.left = t3
+
+        update_height(z)
+        update_height(y)
         return y
 
     def _rebalance(self, node: Node) -> Node:
@@ -132,17 +176,18 @@ class AVL(BST):
         node.left = self._rebalance(node.left)
         node.right = self._rebalance(node.right)
 
+        update_height(node)
         balance = self.get_balance(node)
 
         if balance > 1:
             if self.get_balance(node.left) < 0:
-                node.left = self.rotate_left(node.left)
-            return self.rotate_right(node)
+                node.left = self._rotate_left(node.left)
+            return self._rotate_right(node)
 
         if balance < -1:
             if self.get_balance(node.right) > 0:
-                node.right = self.rotate_right(node.right)
-            return self.rotate_left(node)
+                node.right = self._rotate_right(node.right)
+            return self._rotate_left(node)
 
         return node
 
@@ -160,6 +205,7 @@ class AVL(BST):
     def pu(self, new_node: Node):
         super().pu(new_node)
 
+    @is_root
     @avlize
     def po(self, val: int):
         super().po(val)
