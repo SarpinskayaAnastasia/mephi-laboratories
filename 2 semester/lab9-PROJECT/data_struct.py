@@ -7,7 +7,6 @@ class Author:
 
 class Book:
     def __init__(self):
-        self.id = 0
         self.isbn = ""
         self.name = ""
         self.author = ""
