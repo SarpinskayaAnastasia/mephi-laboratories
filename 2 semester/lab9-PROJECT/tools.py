@@ -2,22 +2,15 @@ import re
 
 
 def check_isbn(isbn: str) -> bool:
+    isbn = isbn.replace("--", "$")
+    isbn = isbn.replace("-", "", 4)
     """
-    Корректными будем считать:
-        1. ISBN nnn-n-nn-nnnnnn-n
-        2. ISBN nnn-n-nnnn-nnnn-n
-        3. ISBN nnn-n-nnn-nnnnn-n
-        4. nnn-n-nn-nnnnnn-n
-        5. nnn-n-nnnn-nnnn-n
-        6. nnn-n-nnn-nnnnn-n
-        7. nnnnnnnnnnnnn
+    Крч, прописывать эти все возможные варианты - неэффективно. Лучше будет удалить лишние символы и проверить так.
     А ЕЩЁ мы должны проверять последнюю контрольную цифру, ибо это - контрольная цифра
     """
-    isbn_pattern = re.compile(
-        r'^(ISBN\s?)?(?:\d{3}-\d-\d{2}-\d{6}-\d|\d{3}-\d-\d{3}-\d{5}-\d|\d{3}-\d-\d{4}-\d{4}-\d|\d{13})$')
+    isbn_pattern = re.compile(r'^(ISBN\s?)?\d{13}$')
     if isbn_pattern.match(isbn):
         isbn = isbn.lstrip("ISBN ")
-        isbn = isbn.replace("-", "")
         digits = list(int(isbn[i]) for i in range(12))
         s = sum(digits[i] * 3 if i % 2 else digits[i] for i in range(len(digits)))
         return int(isbn[-1]) == (10 - s % 10) % 10
@@ -84,3 +77,7 @@ def test_isbn_wrong_format_still_fails():
 
 def test_isbn_wrong_check_digit_no_dashes():
     assert check_isbn("97812345678X0") is False
+
+
+def test_isbn_double_dash():
+    assert check_isbn("978-2--26611156-0") is False
