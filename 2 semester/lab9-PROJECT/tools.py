@@ -1,3 +1,17 @@
+class EmptyLibrary(Exception):
+    def __init__(self, message="Bookshelf is empty. Type \"updata [FILE_PATH]\" "
+                               "or \"add [FILE_PATH]\" to add some books in library."):
+        self.message = message
+        super().__init__(self.message)
+
+
+class IncorrectBookStatus(Exception):
+    def __init__(self, status, message="Incorrect book status"):
+        self.status = status
+        self.message = f"{message}: '{status}'"
+        super().__init__(self.message)
+
+
 def check_isbn(isbn: str) -> bool:
     isbn = isbn.strip()
     if isbn.upper().startswith("ISBN"):

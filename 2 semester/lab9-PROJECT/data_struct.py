@@ -1,6 +1,9 @@
 import functools
 from hash_table.hash_table import HashTable
 from typing import Callable, TypeVar, ParamSpec
+from pathlib import Path
+
+from tools import EmptyLibrary, IncorrectBookStatus, check_isbn
 
 P = ParamSpec("P")
 R = TypeVar("R")
@@ -14,8 +17,8 @@ class Author:
 
 
 class Book:
-    def __init__(self):
-        self.isbn = ""
+    def __init__(self, isbn: str):
+        self.isbn = isbn
         self.name = ""
         self.author = Author()
         self.year = 0
@@ -34,8 +37,7 @@ class Library:
         @functools.wraps(func)
         def wrapper(self, *args: P.args, **kwargs: P.kwargs) -> R:
             if not len(self.bookshelf):
-                raise IndexError("Bookshelf is empty. Type \"updata [FILE_PATH]\" or "
-                                 "\"add [FILE_PATH]\" to add some books in library.")
+                raise EmptyLibrary()
             return func(self, *args, **kwargs)
 
         return wrapper
@@ -45,7 +47,18 @@ class Library:
         return self.bookshelf.get_value(isbn)
 
     def add_book(self, filepath: str):
-        pass
+        fp = Path(filepath)
+        if fp.exists():
+            if fp.is_file():
+                if fp.suffix.lower() == ".csv":
+                    with fp.open("r", encoding="UTF-8") as new_book:
+                        pass
+                else:
+                    raise FileExistsError(f"Expected *.csv file, got: *{fp.suffix.lower()}")
+            else:
+                raise FileExistsError("Expected file, not anything else!")
+        else:
+            raise FileExistsError("Incorrect file path!")
 
     @is_empty
     def delete_book(self, isbn: str):
@@ -56,14 +69,14 @@ class Library:
         if book_to_give.available:
             book_to_give.available = False
             return
-        raise ValueError("Book is unavailable")  # надо в дальнейшем прописать кастомные ошибки
+        raise IncorrectBookStatus("unavailable")
 
     def receive_book(self, isbn: str):
         book_to_receive = self.find_book(isbn)
         if not book_to_receive.available:
             book_to_receive.available = True
             return
-        raise ValueError("Book is already available")  # то же самое
+        raise IncorrectBookStatus("available")
 
     def load_from_file(self, filepath: str):
         pass
