@@ -1,23 +1,22 @@
-import re
-
-
 def check_isbn(isbn: str) -> bool:
-    isbn = isbn.replace("--", "$")
-    isbn = isbn.replace("-", "", 4)
-    """
-    Крч, прописывать эти все возможные варианты - неэффективно. Лучше будет удалить лишние символы и проверить так.
-    А ЕЩЁ мы должны проверять последнюю контрольную цифру, ибо это - контрольная цифра
-    """
-    isbn_pattern = re.compile(r'^(ISBN\s?)?\d{13}$')
-    if isbn_pattern.match(isbn):
-        isbn = isbn.lstrip("ISBN ")
-        digits = list(int(isbn[i]) for i in range(12))
-        s = sum(digits[i] * 3 if i % 2 else digits[i] for i in range(len(digits)))
-        return int(isbn[-1]) == (10 - s % 10) % 10
-    return False
+    isbn = isbn.strip()
+    if isbn.upper().startswith("ISBN"):
+        isbn = isbn[4:].lstrip()
+
+    parts = isbn.split("-")
+    if len(parts) != 5 or not all(part.isdigit() for part in parts):
+        return False
+
+    digits_str = ''.join(parts)
+    if len(digits_str) != 13:
+        return False
+
+    digits = list(map(int, digits_str[:12]))
+    check_digit = int(digits_str[12])
+    s = sum(d * (3 if i % 2 else 1) for i, d in enumerate(digits))
+    return check_digit == (10 - s % 10) % 10
 
 
-# Корректные форматы
 def test_isbn_correct_format1():
     assert check_isbn("ISBN 978-2-26-611156-0") is True
 
@@ -42,11 +41,10 @@ def test_isbn_correct_format6():
     assert check_isbn("978-2-266-11156-0") is True
 
 
-def test_isbn_correct_format7():
-    assert check_isbn("9782266111560") is True
+def test_isbn_only_digits():
+    assert check_isbn("9782266111560") is False
 
 
-# Некорректные ISBN
 def test_isbn_wrong_check_digit():
     assert check_isbn("ISBN 978-2-266-11156-X") is False
 
@@ -81,3 +79,18 @@ def test_isbn_wrong_check_digit_no_dashes():
 
 def test_isbn_double_dash():
     assert check_isbn("978-2--26611156-0") is False
+
+
+def test_all():
+    test_isbns = """978-0-14-312755-0
+978-0-262-03384-8
+978-0-13-110362-7
+978-1-4920-5681-2
+978-0-13-235088-4
+978-0-596-00712-6
+978-0-201-63361-0
+978-1-119-45633-9
+978-0-13-468599-1
+978-0-596-51774-8""".split('\n')
+    for isbn in test_isbns:
+        assert check_isbn(isbn) is True
