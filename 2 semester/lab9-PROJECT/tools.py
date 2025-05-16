@@ -12,6 +12,12 @@ class IncorrectBookStatus(Exception):
         super().__init__(self.message)
 
 
+class BookDoesntExist(Exception):
+    def __init__(self, message="Book doesn't exist!"):
+        self.message = message
+        super().__init__(self.message)
+
+
 def check_isbn(isbn: str) -> bool:
     isbn = isbn.strip()
     if isbn.upper().startswith("ISBN"):

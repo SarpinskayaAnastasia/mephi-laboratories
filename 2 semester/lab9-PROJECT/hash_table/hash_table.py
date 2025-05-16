@@ -19,6 +19,11 @@ class HashTable:
     def __str__(self):
         return f"[\n{";\n".join(str(listik) for listik in self.data)}\n]"
 
+    def __iter__(self):
+        for bucket in self.data:
+            for node in bucket:
+                yield node.data
+
     @staticmethod
     def domain_expansion(func: Callable[P, R]) -> Callable[P, R]:
         @functools.wraps(func)
