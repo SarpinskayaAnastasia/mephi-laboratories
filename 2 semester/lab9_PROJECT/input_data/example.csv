@@ -1,1 +1,14 @@
-хз;хз;хз;хз
+ISBN;Book Name;Author Name;Author Second Name;Author Patronymic;Publishing Year;Genre;Status
+978-0-14-312755-0;"Sapiens: A Brief History of Humankind";Yuval;Harari;;2011;Non-fiction;1
+978-0-262-03384-8;Introduction to Algorithms;Thomas;Cormen;;2009;Computer Science;1
+978-0-13-110362-7;The C Programming Language;Brian;Kernighan;;1988;Programming;1
+978-1-4920-5681-2;Fluent Python;Luciano;Ramalho;;2015;Programming;1
+978-0-13-235088-4;Clean Code;Robert;Martin;;2008;Software Engineering;1
+978-0-596-00712-6;Head First Design Patterns;Eric;Freeman;;2004;Programming;0
+978-0-201-63361-0;Design Patterns;Erich;Gamma;;1994;Software Engineering;1
+978-1-119-45633-9;Cybersecurity For Dummies;Joseph;Steinberg;;2019;Cybersecurity;0
+978-0-13-468599-1;Effective Java;Joshua;Bloch;;2017;Programming;1
+978-0-596-51774-8;"JavaScript: The Good Parts";Douglas;Crockford;;2008;Programming;0
+978-0-596-80281-3;"Beautiful Code, Compelling Examples";Andy;Oram;;2007;Programming;0
+978-0-321-56384-2;"Clean Architecture, A Craftsman's Guide to Software Structure and Design";Robert;Martin;;2017;Software Engineering;1
+978-0-13-708107-3;"The Clean Coder, A Code of Conduct for Professional Programmers";Robert;Martin;;2011;Software Engineering;0

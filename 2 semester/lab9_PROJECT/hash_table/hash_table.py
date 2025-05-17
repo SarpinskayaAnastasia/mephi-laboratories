@@ -63,7 +63,7 @@ class HashTable:
             except ValueError:
                 return None
         predicted_node = self.data[index].top
-        if predicted_node.key != key:
+        if not predicted_node and predicted_node.key != key:
             return None
         return predicted_node.data
 
@@ -76,7 +76,7 @@ class HashTable:
             except ValueError:
                 return None
         predicted_node = self.data[index].top
-        if predicted_node.key != key:
+        if not predicted_node and predicted_node.key != key:
             return None
         self.length -= 1
         return predicted_node.data
