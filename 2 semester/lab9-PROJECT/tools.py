@@ -13,8 +13,8 @@ class IncorrectBookStatus(Exception):
 
 
 class BookDoesntExist(Exception):
-    def __init__(self, message="Book doesn't exist!"):
-        self.message = message
+    def __init__(self, reason, message="Book doesn't exist:"):
+        self.message = f"{message}: {reason}"
         super().__init__(self.message)
 
 

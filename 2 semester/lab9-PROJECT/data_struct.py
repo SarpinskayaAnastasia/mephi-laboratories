@@ -45,9 +45,11 @@ class Library:
 
     @is_empty
     def find_book(self, isbn: str) -> Book:
+        if not check_isbn(isbn):
+            raise BookDoesntExist("Incorrect ISBN!")
         interesting_book = self.bookshelf.get_value(isbn)
         if not interesting_book:
-            raise BookDoesntExist()
+            raise BookDoesntExist("The ISBN you entered doesn't match any book.")
         return interesting_book
 
     def add_book(self, filepath: str):
@@ -105,12 +107,16 @@ class Library:
 
     @is_empty
     def delete_book(self, isbn: str):
+        if not check_isbn(isbn):
+            raise BookDoesntExist("Incorrect ISBN!")
         deleted_book = self.bookshelf.delete_with_key(isbn)
         if not deleted_book:
-            raise BookDoesntExist()
+            raise BookDoesntExist("The ISBN you entered doesn't match any book")
         return deleted_book
 
     def give_book(self, isbn: str):
+        if not check_isbn(isbn):
+            raise BookDoesntExist("Incorrect ISBN!")
         book_to_give = self.find_book(isbn)
         if book_to_give.available:
             book_to_give.available = False
@@ -118,6 +124,8 @@ class Library:
         raise IncorrectBookStatus("unavailable")
 
     def receive_book(self, isbn: str):
+        if not check_isbn(isbn):
+            raise BookDoesntExist("Incorrect ISBN!")
         book_to_receive = self.find_book(isbn)
         if not book_to_receive.available:
             book_to_receive.available = True
@@ -178,27 +186,26 @@ class Library:
         else:
             raise FileExistsError("Incorrect file path!")
 
-
-def save_to_file(self, filepath: str):
-    fp = Path(filepath)
-    if not fp.parent.exists():
-        raise FileNotFoundError(f"Directory '{fp.parent}' does not exist.")
-    if fp.suffix.lower() != ".csv":
-        raise ValueError(f"Expected *.csv file, got: *{fp.suffix.lower()}")
-    with fp.open("w", encoding="UTF-8", newline="") as out_file:
-        writer = csv.writer(out_file, delimiter=';')
-        writer.writerow([
-            "ISBN", "Book Name", "Author Name", "Author Second Name",
-            "Author Patronymic", "Publishing Year", "Genre", "Status"
-        ])
-        for book in self.bookshelf:
+    def save_to_file(self, filepath: str):
+        fp = Path(filepath)
+        if not fp.parent.exists():
+            raise FileNotFoundError(f"Directory '{fp.parent}' does not exist.")
+        if fp.suffix.lower() != ".csv":
+            raise ValueError(f"Expected *.csv file, got: *{fp.suffix.lower()}")
+        with fp.open("w", encoding="UTF-8", newline="") as out_file:
+            writer = csv.writer(out_file, delimiter=';')
             writer.writerow([
-                book.isbn,
-                book.name,
-                book.author.name,
-                book.author.second_name,
-                book.author.patronymic,
-                book.year,
-                book.genre,
-                "Yes" if book.available else "No"
+                "ISBN", "Book Name", "Author Name", "Author Second Name",
+                "Author Patronymic", "Publishing Year", "Genre", "Status"
             ])
+            for book in self.bookshelf:
+                writer.writerow([
+                    book.isbn,
+                    book.name,
+                    book.author.name,
+                    book.author.second_name,
+                    book.author.patronymic,
+                    book.year,
+                    book.genre,
+                    "Yes" if book.available else "No"
+                ])
