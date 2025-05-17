@@ -1,5 +1,5 @@
 import functools
-from hash_table.hash_table import HashTable
+from hash_table import HashTable
 from typing import Callable, TypeVar, ParamSpec
 from pathlib import Path
 import csv

@@ -1,6 +1,6 @@
 import functools
 
-from essentials import OnceConnected, OnceNode
+from .essentials import OnceConnected, OnceNode
 from typing import Callable, TypeVar, ParamSpec
 
 P = ParamSpec("P")
